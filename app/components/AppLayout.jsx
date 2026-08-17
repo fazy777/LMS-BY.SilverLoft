@@ -39,10 +39,21 @@ export default function AppLayout({ children }) {
   const pathname = usePathname()
   const router = useRouter()
   const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [role, setRole] = useState('student')
   const [user, setUser] = useState(null)
+  const [authChecked, setAuthChecked] = useState(false)
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false)
   const [userDropdownOpen, setUserDropdownOpen] = useState(false)
+
+  // Close drawers when route changes
+  useEffect(() => {
+    setMobileDrawerOpen(false)
+    setMobileMenuOpen(false)
+    setMobileSearchOpen(false)
+    setUserDropdownOpen(false)
+  }, [pathname])
 
   useEffect(() => {
     if (pathname?.startsWith('/admin')) {
@@ -62,9 +73,15 @@ export default function AppLayout({ children }) {
           if (pathname?.startsWith('/instructor') && json.data.is_instructor) {
             setRole('instructor')
           }
+        } else {
+          setUser(null)
         }
+        setAuthChecked(true)
       })
-      .catch(() => {})
+      .catch(() => {
+        setUser(null)
+        setAuthChecked(true)
+      })
   }, [pathname])
 
   const isSuperAdmin = user?.email === 'hafizmfaizanali@gmail.com' || Boolean(user?.is_admin)
@@ -88,6 +105,7 @@ export default function AppLayout({ children }) {
 
   const handleRoleChange = (newRole) => {
     setRole(newRole)
+    setMobileDrawerOpen(false)
     if (newRole === 'student') router.push('/dashboard')
     else if (newRole === 'instructor') router.push('/instructor')
   }
@@ -102,8 +120,8 @@ export default function AppLayout({ children }) {
     }
   }
 
-  const displayName = user?.display_name || (user?.email === 'hafizmfaizanali@gmail.com' ? 'Faizan Ali' : role === 'instructor' ? 'Instructor' : 'Student')
-  const initials = displayName.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase()
+  const displayName = user?.display_name || user?.email?.split('@')[0] || (role === 'instructor' ? 'Instructor' : 'Student')
+  const initials = displayName.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase() || 'SL'
 
   // ─────────────────────────────────────────────────────────────
   // 1. PUBLIC MARKETPLACE VIEW (Header + Main Content + Footer)
@@ -114,13 +132,26 @@ export default function AppLayout({ children }) {
         {/* Site Header */}
         <header className="site-header">
           <div className="wrap bar">
+            {/* Mobile Hamburger Menu Toggle */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 rounded-xl text-[#112A46] hover:bg-[#EAF1FA] transition-colors cursor-pointer"
+              aria-label="Open mobile menu"
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
+            </button>
+
             <Link href="/" className="logo">
               <span className="mark">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                   <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </span>
-              Silver Loft
+              <span className="font-display font-black text-lg sm:text-xl text-[#112A46]">Silver Loft</span>
             </Link>
 
             <nav className="nav-links hidden md:flex">
@@ -152,10 +183,10 @@ export default function AppLayout({ children }) {
                 <div className="relative">
                   <button
                     onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                    className="flex items-center gap-2.5 p-1 rounded-full hover:bg-[#EAF1FA] transition-colors cursor-pointer"
+                    className="flex items-center gap-2 p-1 rounded-full hover:bg-[#EAF1FA] transition-colors cursor-pointer"
                   >
-                    <div className="avatar">{initials}</div>
-                    <span className="hidden sm:inline text-[13.5px] font-bold text-[#112A46] leading-tight">{displayName}</span>
+                    <div className="avatar text-xs">{initials}</div>
+                    <span className="hidden sm:inline text-[13px] font-bold text-[#112A46] leading-tight truncate max-w-[120px]">{displayName}</span>
                   </button>
 
                   {userDropdownOpen && (
@@ -188,14 +219,14 @@ export default function AppLayout({ children }) {
                   )}
                 </div>
               ) : (
-                <>
-                  <Link href="/login" className="btn btn-ghost btn-sm font-bold">
+                <div className="flex items-center gap-2">
+                  <Link href="/login" className="btn btn-ghost btn-sm font-bold text-xs sm:text-sm px-3 sm:px-4">
                     Log in
                   </Link>
-                  <Link href="/signup" className="btn btn-primary btn-sm font-bold shadow-sm">
+                  <Link href="/signup" className="btn btn-primary btn-sm font-bold text-xs sm:text-sm px-3 sm:px-4 shadow-sm">
                     Sign up
                   </Link>
-                </>
+                </div>
               )}
             </div>
           </div>
@@ -207,6 +238,129 @@ export default function AppLayout({ children }) {
             </div>
           )}
         </header>
+
+        {/* Mobile Navigation Drawer for Public Marketplace */}
+        {mobileMenuOpen && (
+          <div className="md:hidden">
+            <div className="drawer-backdrop" onClick={() => setMobileMenuOpen(false)} />
+            <div className="drawer-panel p-5">
+              <div className="flex items-center justify-between pb-4 border-b border-white/15 mb-4">
+                <Link href="/" className="logo" style={{ color: '#FFFFFF' }} onClick={() => setMobileMenuOpen(false)}>
+                  <span className="mark">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#ACC8E5" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </span>
+                  <span className="font-bold">Silver Loft</span>
+                </Link>
+                <button
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-1 rounded-lg text-[#ACC8E5] hover:text-white"
+                  aria-label="Close menu"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="space-y-1 flex-1 overflow-y-auto">
+                <div className="side-label text-[#ACC8E5]">Explore</div>
+                <Link
+                  href="/courses"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`side-link ${pathname?.startsWith('/courses') ? 'active' : ''}`}
+                >
+                  <SearchIcon size={18} />
+                  <span>Courses Catalog</span>
+                </Link>
+                <Link
+                  href="/instructor"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="side-link"
+                >
+                  <BookOpenIcon size={18} />
+                  <span>Teach on Silver Loft</span>
+                </Link>
+
+                {user && (
+                  <>
+                    <div className="side-label text-[#ACC8E5] mt-4">My Account</div>
+                    <Link
+                      href="/dashboard"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="side-link"
+                    >
+                      <GridIcon size={18} />
+                      <span>Student Dashboard</span>
+                    </Link>
+                    <Link
+                      href="/instructor"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="side-link"
+                    >
+                      <BookOpenIcon size={18} />
+                      <span>Instructor Studio</span>
+                    </Link>
+                    {isSuperAdmin && (
+                      <Link
+                        href="/admin"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="side-link text-[#C084FC]"
+                      >
+                        <ChartIcon size={18} />
+                        <span>Admin Portal</span>
+                      </Link>
+                    )}
+                    <Link
+                      href="/account"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="side-link"
+                    >
+                      <UserIcon size={18} />
+                      <span>Account Settings</span>
+                    </Link>
+                  </>
+                )}
+              </div>
+
+              <div className="pt-4 border-t border-white/15">
+                {user ? (
+                  <div>
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="avatar text-xs" style={{ width: 34, height: 34 }}>{initials}</div>
+                      <div className="overflow-hidden flex-1">
+                        <div className="text-xs font-bold text-white truncate">{displayName}</div>
+                        <div className="text-[11px] text-[#ACC8E5] truncate">{user.email}</div>
+                      </div>
+                    </div>
+                    <button
+                      onClick={handleSignOut}
+                      className="w-full py-2.5 rounded-xl border border-white/20 text-[#ACC8E5] text-xs font-bold hover:bg-white/10"
+                    >
+                      Sign out
+                    </button>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 gap-2">
+                    <Link
+                      href="/login"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="btn btn-secondary btn-sm text-xs font-bold w-full"
+                    >
+                      Log in
+                    </Link>
+                    <Link
+                      href="/signup"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="btn btn-primary btn-sm text-xs font-bold w-full bg-[#ACC8E5] text-[#112A46]"
+                    >
+                      Sign up
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Public Content Body */}
         <main className="flex-1 min-w-0">
@@ -222,11 +376,50 @@ export default function AppLayout({ children }) {
   // ─────────────────────────────────────────────────────────────
   // 2. AUTHENTICATED WORKSPACE VIEW (Sidebar + Topbar + Content)
   // ─────────────────────────────────────────────────────────────
+
+  // If auth is still checking, show a clean loading screen
+  if (!authChecked) {
+    return (
+      <div className="min-h-screen bg-[#F0F5FB] flex flex-col items-center justify-center p-6 text-center">
+        <div className="w-8 h-8 rounded-full border-3 border-[#112A46] border-t-transparent animate-spin mb-3"></div>
+        <p className="text-sm font-bold text-[#112A46]">Loading workspace...</p>
+      </div>
+    )
+  }
+
+  // If user is not authenticated on a protected workspace route, redirect to login
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-[#F0F5FB] flex flex-col items-center justify-center p-6 text-center">
+        <div className="card p-8 max-w-md w-full text-center shadow-lg">
+          <div className="text-3xl mb-3">🔒</div>
+          <h2 className="h-card text-lg text-[#112A46] font-bold mb-2">Authentication Required</h2>
+          <p className="text-xs text-[#64748B] mb-6 leading-relaxed">
+            Please log in to access your course dashboard, learning materials, and instructor settings.
+          </p>
+          <div className="flex gap-3 justify-center">
+            <Link
+              href={`/login?redirect=${encodeURIComponent(pathname || '/dashboard')}`}
+              className="btn btn-primary btn-sm font-bold w-full"
+            >
+              Sign In to Continue →
+            </Link>
+          </div>
+          <div className="mt-4">
+            <Link href="/" className="text-xs text-[#64748B] hover:text-[#112A46] underline">
+              ← Return to marketplace
+            </Link>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="app-shell">
-      {/* ── Sidebar ── */}
+      {/* ── Desktop Sidebar ── */}
       <aside
-        className="app-sidebar"
+        className="app-sidebar hidden md:flex"
         style={{
           width: sidebarOpen ? 250 : 76,
           minWidth: sidebarOpen ? 250 : 76,
@@ -333,6 +526,7 @@ export default function AppLayout({ children }) {
             display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10,
             boxShadow: '0 2px 8px rgba(17,42,70,0.12)'
           }}
+          aria-label={sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
         >
           <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
             <path d={sidebarOpen ? 'M6 2L4 5l2 3' : 'M4 2l2 3-2 3'} stroke="#64748B" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
@@ -340,28 +534,140 @@ export default function AppLayout({ children }) {
         </button>
       </aside>
 
+      {/* ── Mobile Drawer (Slide-out navigation for screens < 900px) ── */}
+      {mobileDrawerOpen && (
+        <div className="md:hidden">
+          <div className="drawer-backdrop" onClick={() => setMobileDrawerOpen(false)} />
+          <div className="drawer-panel p-5">
+            <div className="flex items-center justify-between pb-4 border-b border-white/15 mb-4">
+              <Link href="/" className="logo" style={{ color: '#FFFFFF' }} onClick={() => setMobileDrawerOpen(false)}>
+                <span className="mark">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#ACC8E5" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </span>
+                <span className="font-bold">Silver Loft</span>
+              </Link>
+              <button
+                onClick={() => setMobileDrawerOpen(false)}
+                className="p-1 rounded-lg text-[#ACC8E5] hover:text-white"
+                aria-label="Close drawer"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Role switcher inside mobile drawer */}
+            {!isAdminRoute && (
+              <div className="mb-4" style={{ backgroundColor: 'rgba(172,200,229,0.15)', borderRadius: 10, padding: 4, display: 'flex', gap: 2 }}>
+                {['student', 'instructor'].map(r => (
+                  <button
+                    key={r}
+                    onClick={() => handleRoleChange(r)}
+                    style={{
+                      flex: 1, padding: '7px 0', borderRadius: 8, border: 'none', cursor: 'pointer',
+                      fontSize: 11.5, fontWeight: 800, textTransform: 'capitalize',
+                      backgroundColor: role === r ? '#FFFFFF' : 'transparent',
+                      color: role === r ? '#112A46' : '#C9D9EA',
+                      transition: 'all 0.15s',
+                    }}
+                  >
+                    {r === 'student' ? '🎓 Student' : '🎤 Instructor'}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Navigation Group */}
+            <div className="side-group flex-1 overflow-y-auto space-y-1">
+              <div className="side-label text-[#ACC8E5]">
+                {isAdminRoute ? 'Admin Portal' : role === 'instructor' ? 'Instructor Studio' : 'Student Learning'}
+              </div>
+
+              {navItems.map(({ icon: Icon, label, href }) => {
+                const isActive = href === '/' ? pathname === '/' : pathname?.startsWith(href)
+                return (
+                  <Link
+                    key={label}
+                    href={href}
+                    onClick={() => setMobileDrawerOpen(false)}
+                    className={`side-link ${isActive ? 'active' : ''}`}
+                  >
+                    <Icon size={18} color="#ACC8E5" />
+                    <span>{label}</span>
+                  </Link>
+                )
+              })}
+
+              <div className="pt-2">
+                <Link
+                  href="/"
+                  onClick={() => setMobileDrawerOpen(false)}
+                  className="side-link text-[#ACC8E5] font-bold"
+                >
+                  <span>← Back to Marketplace</span>
+                </Link>
+              </div>
+            </div>
+
+            {/* User footer inside drawer */}
+            <div className="pt-4 border-t border-white/15 mt-auto">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="avatar text-xs" style={{ width: 34, height: 34 }}>{initials}</div>
+                <div className="overflow-hidden flex-1">
+                  <div className="text-xs font-bold text-white truncate">{displayName}</div>
+                  <div className="text-[11px] text-[#ACC8E5] capitalize truncate">
+                    {isAdminRoute ? 'Administrator' : role === 'instructor' ? 'Instructor' : 'Student'}
+                  </div>
+                </div>
+              </div>
+
+              <button
+                onClick={handleSignOut}
+                className="w-full py-2 rounded-lg border border-white/20 text-[#ACC8E5] text-xs font-bold hover:bg-white/10"
+              >
+                Sign out
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── App Main Stage ── */}
-      <div className="app-main flex flex-col min-h-screen">
+      <div className="app-main flex flex-col min-h-screen pb-16 md:pb-0">
         {/* Topbar */}
         <header className="app-topbar">
-          <div className="h-section" style={{ margin: 0, color: '#112A46' }}>
+          {/* Mobile Drawer Trigger Button */}
+          <button
+            onClick={() => setMobileDrawerOpen(true)}
+            className="md:hidden p-2 -ml-2 rounded-xl text-[#112A46] hover:bg-[#EAF1FA] transition-colors cursor-pointer"
+            aria-label="Open navigation menu"
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
+
+          <div className="h-section text-sm sm:text-base md:text-lg truncate max-w-[180px] sm:max-w-none" style={{ margin: 0, color: '#112A46' }}>
             {isAdminRoute ? 'Admin Control Center' : role === 'instructor' ? 'Instructor Studio' : 'Learning Dashboard'}
           </div>
 
-          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 14 }}>
-            <div className="hidden lg:block" style={{ width: 280 }}>
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div className="hidden lg:block" style={{ width: 260 }}>
               <HeaderSearchBar placeholder="Quick course search..." />
             </div>
 
-            <Link href="/courses" className="btn btn-secondary btn-sm hidden sm:inline-flex font-bold">
+            <Link href="/courses" className="btn btn-secondary btn-sm hidden sm:inline-flex font-bold text-xs">
               Explore Courses
             </Link>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, paddingLeft: 12, borderLeft: '1px solid #E2E8F0' }}>
-              <div className="avatar" style={{ width: 36, height: 36 }}>{initials}</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, paddingLeft: 8, borderLeft: '1px solid #E2E8F0' }}>
+              <div className="avatar text-xs" style={{ width: 34, height: 34 }}>{initials}</div>
               <div className="hidden sm:block">
-                <div style={{ fontSize: 13.5, fontWeight: 700, color: '#0B1B2E', lineHeight: 1.2 }}>{displayName}</div>
-                <div style={{ fontSize: 11.5, color: '#64748B', textTransform: 'capitalize', lineHeight: 1.2, marginTop: 2 }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: '#0B1B2E', lineHeight: 1.2 }}>{displayName}</div>
+                <div style={{ fontSize: 11, color: '#64748B', textTransform: 'capitalize', lineHeight: 1.2 }}>
                   {isAdminRoute ? 'Administrator' : role === 'instructor' ? 'Instructor' : 'Student'}
                 </div>
               </div>
@@ -376,6 +682,55 @@ export default function AppLayout({ children }) {
 
         {/* Dedicated Workspace Footer */}
         <WorkspaceFooter />
+
+        {/* ── Mobile Bottom Navigation Bar (Screens < 768px) ── */}
+        <nav className="mobile-bottom-nav md:hidden">
+          <Link
+            href={role === 'instructor' ? '/instructor' : '/dashboard'}
+            className={`mobile-nav-item ${(pathname === '/dashboard' || pathname === '/instructor') ? 'active' : ''}`}
+          >
+            <GridIcon size={18} />
+            <span>{role === 'instructor' ? 'Studio' : 'Dashboard'}</span>
+          </Link>
+
+          <Link
+            href="/courses"
+            className={`mobile-nav-item ${pathname?.startsWith('/courses') ? 'active' : ''}`}
+          >
+            <SearchIcon size={18} />
+            <span>Browse</span>
+          </Link>
+
+          {role === 'instructor' && (
+            <Link
+              href="/instructor/earnings"
+              className={`mobile-nav-item ${pathname?.startsWith('/instructor/earnings') ? 'active' : ''}`}
+            >
+              <DollarIcon size={18} />
+              <span>Earnings</span>
+            </Link>
+          )}
+
+          <Link
+            href="/account"
+            className={`mobile-nav-item ${pathname?.startsWith('/account') ? 'active' : ''}`}
+          >
+            <UserIcon size={18} />
+            <span>Account</span>
+          </Link>
+
+          <button
+            onClick={() => setMobileDrawerOpen(true)}
+            className="mobile-nav-item border-none bg-transparent cursor-pointer"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+              <circle cx="12" cy="12" r="1" />
+              <circle cx="19" cy="12" r="1" />
+              <circle cx="5" cy="12" r="1" />
+            </svg>
+            <span>Menu</span>
+          </button>
+        </nav>
       </div>
     </div>
   )

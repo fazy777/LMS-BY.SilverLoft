@@ -342,7 +342,7 @@ function VerifyContent() {
                                 <label className="block text-[13px] font-medium text-[#112A46]/80 mb-2.5">
                                     6-Digit Verification Code
                                 </label>
-                                <div className="flex items-center justify-between gap-2" onPaste={handlePaste}>
+                                <div className="flex items-center justify-between gap-1.5 sm:gap-2" onPaste={handlePaste}>
                                     {otp.map((digit, idx) => (
                                         <input
                                             key={idx}
@@ -353,7 +353,7 @@ function VerifyContent() {
                                             value={digit}
                                             onChange={(e) => handleOtpChange(idx, e.target.value)}
                                             onKeyDown={(e) => handleKeyDown(idx, e)}
-                                            className="w-12 h-14 sm:w-12 sm:h-14 text-center text-[22px] font-bold rounded-xl border border-[#112A46]/20 bg-[#F9FBFE] text-[#112A46] focus:border-[#112A46] focus:bg-white focus:ring-4 focus:ring-[#ACC8E5]/40 outline-none transition-all"
+                                            className="flex-1 min-w-0 max-w-[48px] h-12 sm:h-14 text-center text-lg sm:text-[22px] font-bold rounded-xl border border-[#112A46]/20 bg-[#F9FBFE] text-[#112A46] focus:border-[#112A46] focus:bg-white focus:ring-4 focus:ring-[#ACC8E5]/40 outline-none transition-all"
                                         />
                                     ))}
                                 </div>

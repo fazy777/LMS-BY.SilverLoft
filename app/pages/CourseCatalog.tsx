@@ -65,6 +65,7 @@ export default function CourseCatalog({
   const [priceFilter, setPriceFilter] = useState<'all' | 'under25' | '25to75' | '75plus'>('all')
   const [minRating, setMinRating] = useState<number>(0)
   const [selectedLevel, setSelectedLevel] = useState<string>('all')
+  const [mobileFilterOpen, setMobileFilterOpen] = useState(false)
 
   const [prevUrlState, setPrevUrlState] = useState({ q: urlQ, cat: urlCategory })
   if (prevUrlState.q !== urlQ || prevUrlState.cat !== urlCategory) {
@@ -103,7 +104,7 @@ export default function CourseCatalog({
       })
   }, [])
 
-  // Debounce sync to browser URL so typing updates the URL query string cleanly
+  // Debounce sync to browser URL
   useEffect(() => {
     const timer = setTimeout(() => {
       const params = new URLSearchParams()
@@ -134,7 +135,6 @@ export default function CourseCatalog({
       .then(json => {
         if (isCancelled) return
         if (json.success && Array.isArray(json.data?.courses)) {
-          // Keep API results directly (including [] for 0 matching items)
           setCourses(json.data.courses)
         } else {
           setCourses(FALLBACK_COURSES)
@@ -152,10 +152,9 @@ export default function CourseCatalog({
     }
   }, [search, selectedCategory, sort])
 
-  // Filter client-side for search matching (safe for fallbacks), price & rating
+  // Filter client-side
   const filteredCourses = useMemo(() => {
     return courses.filter(c => {
-      // Client-side search match safeguard
       if (search.trim()) {
         const term = search.trim().toLowerCase()
         const titleMatch = c.title?.toLowerCase().includes(term)
@@ -200,12 +199,14 @@ export default function CourseCatalog({
     router.replace('/courses', { scroll: false })
   }
 
+  const activeFilterCount = (selectedCategory !== 'all' ? 1 : 0) + (priceFilter !== 'all' ? 1 : 0) + (minRating > 0 ? 1 : 0) + (selectedLevel !== 'all' ? 1 : 0)
+
   return (
-    <div className="wrap py-10 min-h-screen">
+    <div className="wrap py-6 sm:py-10 min-h-screen">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="h-display2 text-[#112A46]">Course Catalog</h1>
-        <p className="text-sm text-[#64748B] mt-1 font-medium">
+      <div className="mb-6 sm:mb-8">
+        <h1 className="h-display2 text-[#112A46] text-xl sm:text-2xl md:text-3xl font-extrabold">Course Catalog</h1>
+        <p className="text-xs sm:text-sm text-[#64748B] mt-1 font-medium">
           {search.trim() ? (
             <span>
               Showing {filteredCourses.length} {filteredCourses.length === 1 ? 'result' : 'results'} for &ldquo;<strong className="text-[#112A46]">{search.trim()}</strong>&rdquo;
@@ -218,11 +219,29 @@ export default function CourseCatalog({
         </p>
       </div>
 
+      {/* Mobile Filter Toggle Button */}
+      <div className="md:hidden mb-4">
+        <button
+          onClick={() => setMobileFilterOpen(!mobileFilterOpen)}
+          className="w-full flex items-center justify-between p-3.5 bg-white border border-[#CBD5E1] rounded-2xl text-xs font-bold text-[#112A46] shadow-xs cursor-pointer"
+        >
+          <div className="flex items-center gap-2">
+            <span>⚙️ Filter Options</span>
+            {activeFilterCount > 0 && (
+              <span className="pill bg-[#112A46] text-white text-[10px] px-2 py-0.5 font-bold">
+                {activeFilterCount} active
+              </span>
+            )}
+          </div>
+          <span>{mobileFilterOpen ? '▲ Hide' : '▼ Expand'}</span>
+        </button>
+      </div>
+
       {/* Layout: Filters Sidebar + Grid */}
       <div className="catalog-layout">
         {/* Sidebar Filters */}
-        <aside>
-          <div className="card p-6 shadow-sm">
+        <aside className={`${mobileFilterOpen ? 'block mb-6' : 'hidden'} md:block`}>
+          <div className="card p-5 sm:p-6 shadow-sm bg-white">
             <div className="flex justify-between items-center mb-5 pb-3 border-b border-[#E2E8F0]">
               <span className="font-bold text-xs text-[#112A46] uppercase tracking-wider">Filters</span>
               <button
@@ -236,7 +255,7 @@ export default function CourseCatalog({
             {/* Category Checkboxes */}
             <div className="filter-block">
               <div className="filter-title">Category</div>
-              <label className="filter-check">
+              <label className="filter-check text-xs sm:text-sm">
                 <input
                   type="radio"
                   name="cat"
@@ -246,7 +265,7 @@ export default function CourseCatalog({
                 All Topics
               </label>
               {categories.map((cat) => (
-                <label key={cat.id} className="filter-check">
+                <label key={cat.id} className="filter-check text-xs sm:text-sm">
                   <input
                     type="radio"
                     name="cat"
@@ -261,7 +280,7 @@ export default function CourseCatalog({
             {/* Price Range */}
             <div className="filter-block">
               <div className="filter-title">Price Range</div>
-              <label className="filter-check">
+              <label className="filter-check text-xs sm:text-sm">
                 <input
                   type="radio"
                   name="price_f"
@@ -270,7 +289,7 @@ export default function CourseCatalog({
                 />
                 All Prices
               </label>
-              <label className="filter-check">
+              <label className="filter-check text-xs sm:text-sm">
                 <input
                   type="radio"
                   name="price_f"
@@ -279,7 +298,7 @@ export default function CourseCatalog({
                 />
                 Under $25
               </label>
-              <label className="filter-check">
+              <label className="filter-check text-xs sm:text-sm">
                 <input
                   type="radio"
                   name="price_f"
@@ -288,7 +307,7 @@ export default function CourseCatalog({
                 />
                 $25 – $75
               </label>
-              <label className="filter-check">
+              <label className="filter-check text-xs sm:text-sm">
                 <input
                   type="radio"
                   name="price_f"
@@ -302,7 +321,7 @@ export default function CourseCatalog({
             {/* Rating Stars */}
             <div className="filter-block">
               <div className="filter-title">Rating</div>
-              <label className="filter-check">
+              <label className="filter-check text-xs sm:text-sm">
                 <input
                   type="radio"
                   name="rating_f"
@@ -311,7 +330,7 @@ export default function CourseCatalog({
                 />
                 All Ratings
               </label>
-              <label className="filter-check">
+              <label className="filter-check text-xs sm:text-sm">
                 <input
                   type="radio"
                   name="rating_f"
@@ -320,7 +339,7 @@ export default function CourseCatalog({
                 />
                 <span className="stars font-bold">★ 4.5 & up</span>
               </label>
-              <label className="filter-check">
+              <label className="filter-check text-xs sm:text-sm">
                 <input
                   type="radio"
                   name="rating_f"
@@ -335,7 +354,7 @@ export default function CourseCatalog({
             <div className="filter-block border-none pb-0 mb-0">
               <div className="filter-title">Level</div>
               {['All Levels', 'Beginner', 'Intermediate', 'Advanced'].map(lvl => (
-                <label key={lvl} className="filter-check">
+                <label key={lvl} className="filter-check text-xs sm:text-sm">
                   <input
                     type="radio"
                     name="level"
@@ -350,21 +369,21 @@ export default function CourseCatalog({
         </aside>
 
         {/* Courses Main Grid Area */}
-        <div>
+        <div className="min-w-0">
           {/* Top Search + Sort Toolbar */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-between items-center mb-6">
+          <div className="flex flex-col sm:flex-row gap-3 justify-between items-stretch sm:items-center mb-6">
             <form onSubmit={e => e.preventDefault()} className="relative w-full sm:max-w-md">
               <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#94A3B8] pointer-events-none transition-colors">
-                <SearchIcon size={18} color={isSearchFocused ? '#112A46' : '#94A3B8'} />
+                <SearchIcon size={17} color={isSearchFocused ? '#112A46' : '#94A3B8'} />
               </span>
               <input
                 type="text"
-                placeholder="Search by keywords, skills, titles, or tools..."
+                placeholder="Search courses, topics, skills..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 onFocus={() => setIsSearchFocused(true)}
                 onBlur={() => setIsSearchFocused(false)}
-                className={`input pl-10 pr-10 h-11 text-sm bg-white border rounded-full transition-all text-[#0B1B2E] outline-none ${
+                className={`input pl-10 pr-10 h-11 text-xs sm:text-sm bg-white border rounded-full transition-all text-[#0B1B2E] outline-none ${
                   isSearchFocused
                     ? 'border-[#112A46] ring-3 ring-[#112A46]/10'
                     : 'border-[#CBD5E1] hover:border-[#94A3B8]'
@@ -382,12 +401,12 @@ export default function CourseCatalog({
               )}
             </form>
 
-            <div className="flex items-center gap-2.5 w-full sm:w-auto justify-end">
-              <span className="text-xs font-bold text-[#64748B] uppercase">Sort by:</span>
+            <div className="flex items-center gap-2 justify-between sm:justify-end">
+              <span className="text-xs font-bold text-[#64748B] uppercase shrink-0">Sort:</span>
               <select
                 value={sort}
                 onChange={e => setSort(e.target.value)}
-                className="input h-11 text-sm font-semibold w-48 bg-white cursor-pointer"
+                className="input h-11 text-xs sm:text-sm font-semibold w-full sm:w-48 bg-white cursor-pointer"
               >
                 {SORT_OPTIONS.map(opt => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -398,9 +417,9 @@ export default function CourseCatalog({
 
           {/* Active Search Filter Badge */}
           {search.trim() && (
-            <div className="flex items-center justify-between mb-6 bg-[#EAF1FA] border border-[#CBD5E1] rounded-xl px-4 py-2 text-xs text-[#112A46]">
+            <div className="flex items-center justify-between mb-5 bg-[#EAF1FA] border border-[#CBD5E1] rounded-xl px-4 py-2 text-xs text-[#112A46]">
               <div className="flex items-center gap-2">
-                <span className="font-semibold">Filtered by keyword:</span>
+                <span className="font-semibold">Filtered by:</span>
                 <span className="pill bg-[#112A46] text-white px-2 py-0.5 text-[11px] font-bold">
                   &ldquo;{search.trim()}&rdquo;
                 </span>
@@ -410,7 +429,7 @@ export default function CourseCatalog({
                 onClick={() => setSearch('')}
                 className="text-[#112A46] hover:text-[#DC2626] font-bold text-xs underline cursor-pointer"
               >
-                Clear keyword
+                Clear
               </button>
             </div>
           )}
@@ -419,14 +438,14 @@ export default function CourseCatalog({
           {loading ? (
             <CourseCatalogSkeleton />
           ) : filteredCourses.length === 0 ? (
-            <div className="card p-16 text-center shadow-sm">
-              <div className="text-4xl mb-3">🔍</div>
-              <h3 className="font-display font-bold text-lg text-[#112A46] mb-1">
+            <div className="card p-8 sm:p-14 text-center shadow-sm bg-white">
+              <div className="text-3xl sm:text-4xl mb-3">🔍</div>
+              <h3 className="font-display font-bold text-base sm:text-lg text-[#112A46] mb-1">
                 {search.trim()
                   ? `No courses found matching "${search.trim()}"`
                   : 'No courses match your filter criteria'}
               </h3>
-              <p className="text-sm text-[#64748B] mb-6 font-medium">
+              <p className="text-xs sm:text-sm text-[#64748B] mb-5 font-medium max-w-sm mx-auto">
                 {search.trim()
                   ? 'Try searching with other keywords or clear your active filters.'
                   : 'Try relaxing your price, rating, or category parameters.'}
@@ -435,19 +454,19 @@ export default function CourseCatalog({
                 {search.trim() && (
                   <button
                     onClick={() => setSearch('')}
-                    className="btn btn-secondary btn-sm font-bold"
+                    className="btn btn-secondary btn-sm font-bold text-xs"
                   >
                     Clear Search
                   </button>
                 )}
-                <button onClick={resetFilters} className="btn btn-primary btn-sm font-bold">
+                <button onClick={resetFilters} className="btn btn-primary btn-sm font-bold text-xs">
                   Reset All Filters
                 </button>
               </div>
             </div>
           ) : (
             <>
-              <div className="grid-courses" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))' }}>
+              <div className="grid-courses">
                 {filteredCourses.map((c) => {
                   const price = `$${((c.price_cents || 0) / 100).toFixed(2)}`
                   return (
@@ -462,32 +481,32 @@ export default function CourseCatalog({
                           backgroundImage: `linear-gradient(180deg, rgba(17,42,70,0.1) 0%, rgba(11,27,46,0.65) 100%), url(${c.thumbnail_url || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=520&h=292&fit=crop'})`,
                         }}
                       >
-                        <span className="pill bg-white/25 text-white backdrop-blur-md border border-white/30 font-bold">
+                        <span className="pill bg-white/25 text-white backdrop-blur-md border border-white/30 font-bold text-[10px]">
                           {c.category?.name || 'Development'}
                         </span>
                       </div>
 
                       <div className="course-body">
-                        <h3 className="course-title text-[#0B1B2E]">
+                        <h3 className="course-title text-[#0B1B2E] text-sm sm:text-base">
                           {c.title}
                         </h3>
 
-                        <div className="course-instr text-[#64748B]">
+                        <div className="course-instr text-[#64748B] text-xs">
                           <span className="mini-avatar bg-[#112A46] text-white flex items-center justify-center text-[10px] font-bold">
                             {c.instructor?.display_name?.slice(0, 2).toUpperCase() || 'SL'}
                           </span>
                           <span className="truncate">{c.instructor?.display_name || 'Silver Loft Instructor'}</span>
                         </div>
 
-                        <div className="course-meta-row">
+                        <div className="course-meta-row text-xs">
                           <div className="stars">
                             <span>★ {c.avg_rating ? Number(c.avg_rating).toFixed(1) : '4.8'}</span>
-                            <span className="text-[#64748B] text-[11.5px] font-normal">({c.review_count?.toLocaleString() || '1,240'})</span>
+                            <span className="text-[#64748B] text-[11px] font-normal">({c.review_count?.toLocaleString() || '1,240'})</span>
                           </div>
                         </div>
 
                         <div className="course-meta-row pt-2.5 mt-auto border-t border-[#F1F5F9]">
-                          <span className="price text-[#112A46]">{price}</span>
+                          <span className="price text-[#112A46] text-base">{price}</span>
                           <span className="text-xs font-bold text-[#112A46] hover:underline">View Course →</span>
                         </div>
                       </div>
@@ -497,11 +516,11 @@ export default function CourseCatalog({
               </div>
 
               {/* Pagination */}
-              <div className="flex justify-center gap-2 mt-10">
+              <div className="flex justify-center gap-2 mt-8 sm:mt-10">
                 {[1, 2, 3].map(n => (
                   <button
                     key={n}
-                    className={`btn btn-sm ${n === 1 ? 'btn-primary' : 'btn-secondary'} w-10 p-0 font-bold`}
+                    className={`btn btn-sm ${n === 1 ? 'btn-primary' : 'btn-secondary'} w-9 h-9 p-0 font-bold text-xs`}
                   >
                     {n}
                   </button>

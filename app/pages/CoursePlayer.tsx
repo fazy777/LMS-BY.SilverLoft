@@ -104,6 +104,7 @@ export default function CoursePlayer({
   const [enrollmentId, setEnrollmentId] = useState<number | null>(null)
   const [loading, setLoading] = useState(true)
   const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [mobilePlaylistOpen, setMobilePlaylistOpen] = useState(false)
   const [playbackSpeed, setPlaybackSpeed] = useState<number>(1)
   const videoRef = useRef<HTMLVideoElement | null>(null)
 
@@ -212,42 +213,89 @@ export default function CoursePlayer({
   const progressPercent = allLessons.length > 0 ? Math.round((completedLessonIds.size / allLessons.length) * 100) : 0
   const activeVideoUrl = resolveVideoUrl(activeLesson?.video_id, currentIdx >= 0 ? currentIdx : 0)
 
+  const renderCurriculumList = (isMobile = false) => (
+    <div className="flex-1 overflow-y-auto">
+      {sections.map((sec, sIdx) => (
+        <div key={sec.id} className="border-b border-[#F1F5F9] last:border-none">
+          <div className="px-4 py-2.5 bg-[#F8FAFC] font-bold text-[11px] text-[#475569] uppercase tracking-wider border-b border-[#E2E8F0]">
+            Section {sIdx + 1}: {sec.title}
+          </div>
+          <div>
+            {sec.lessons?.map((les) => {
+              const isActive = activeLesson?.id === les.id
+              const done = completedLessonIds.has(les.id)
+              return (
+                <div
+                  key={les.id}
+                  onClick={() => {
+                    setActiveLesson(les)
+                    if (isMobile) setMobilePlaylistOpen(false)
+                  }}
+                  className={`flex items-center gap-2.5 px-4 py-3 border-b border-[#F1F5F9] last:border-none cursor-pointer transition-colors text-xs sm:text-sm ${
+                    isActive ? 'bg-[#EAF1FA] font-bold text-[#112A46] border-l-4 border-l-[#112A46]' : 'hover:bg-[#F8FAFC] text-[#334155]'
+                  }`}
+                >
+                  {done ? (
+                    <span className="text-[#16A34A] font-bold text-xs shrink-0">✓</span>
+                  ) : (
+                    <PlayIcon size={13} color={isActive ? '#112A46' : '#94A3B8'} />
+                  )}
+                  <span className="truncate flex-1 font-medium">{les.title}</span>
+                  <span className="text-[10px] sm:text-[11px] text-[#64748B] shrink-0 font-mono font-semibold">
+                    {les.duration_seconds ? `${Math.floor(les.duration_seconds / 60)}m` : 'Read'}
+                  </span>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+
   return (
     <div className="min-h-screen flex flex-col bg-[#0B1B2E] text-white">
       {/* ── TOP THEATER HEADER ── */}
-      <header className="h-16 flex items-center gap-4 px-6 bg-[#112A46] border-b border-white/15 shrink-0 z-20">
+      <header className="min-h-[56px] sm:h-16 flex items-center justify-between gap-3 px-3 sm:px-6 bg-[#112A46] border-b border-white/15 shrink-0 z-20">
         <button
           onClick={() => (onBack ? onBack() : router.push('/dashboard'))}
-          className="btn btn-ghost btn-sm text-[#C9D9EA] hover:text-white font-bold"
+          className="btn btn-ghost btn-sm text-[#C9D9EA] hover:text-white font-bold text-xs px-2 sm:px-3"
         >
-          ← Exit to Dashboard
+          ← Dashboard
         </button>
 
-        <div className="h-5 w-px bg-white/20 hidden sm:block" />
-
-        <div className="font-display font-bold text-sm text-white truncate max-w-md hidden sm:block">
+        <div className="font-display font-bold text-xs sm:text-sm text-white truncate max-w-[140px] sm:max-w-xs md:max-w-md">
           {course?.title || 'Course Player'}
         </div>
 
-        <div className="ml-auto flex items-center gap-4">
-          <div className="flex items-center gap-2.5">
-            <span className="text-xs font-bold text-[#ACC8E5]">{progressPercent}% complete</span>
-            <div className="w-24 h-2 bg-white/25 rounded-full overflow-hidden">
+        <div className="flex items-center gap-2 sm:gap-4">
+          <div className="hidden xs:flex items-center gap-2">
+            <span className="text-[11px] font-bold text-[#ACC8E5]">{progressPercent}%</span>
+            <div className="w-16 sm:w-24 h-1.5 sm:h-2 bg-white/25 rounded-full overflow-hidden">
               <div className="h-full bg-[#16A34A] transition-all duration-300" style={{ width: `${progressPercent}%` }}></div>
             </div>
           </div>
 
+          {/* Desktop Playlist Toggle */}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="btn btn-ghost btn-sm text-xs font-bold text-[#ACC8E5] border border-white/20 hover:border-white/40"
+            className="hidden md:inline-flex btn btn-ghost btn-sm text-xs font-bold text-[#ACC8E5] border border-white/20 hover:border-white/40 px-3"
           >
             {sidebarOpen ? 'Hide Playlist' : 'Show Playlist'}
+          </button>
+
+          {/* Mobile Playlist Drawer Toggle */}
+          <button
+            onClick={() => setMobilePlaylistOpen(!mobilePlaylistOpen)}
+            className="md:hidden btn btn-ghost btn-sm text-xs font-bold text-[#ACC8E5] border border-white/20 px-2.5"
+          >
+            📋 Lessons ({allLessons.length})
           </button>
         </div>
       </header>
 
       {/* ── MAIN STAGE (Player + Playlist Sidebar) ── */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex overflow-hidden relative">
         {/* Left: Video Player & Lesson Notes */}
         <main className="flex-1 flex flex-col overflow-y-auto bg-[#0B1B2E]">
           {/* Video Theater Screen */}
@@ -271,33 +319,31 @@ export default function CoursePlayer({
               </div>
 
               {/* Speed Controls Bar */}
-              <div className="w-full max-w-5xl py-2 px-4 bg-[#071524] flex items-center justify-between text-xs text-[#ACC8E5]">
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold text-white/70">Playback Speed:</span>
+              <div className="w-full max-w-5xl py-2 px-3 sm:px-4 bg-[#071524] flex items-center justify-between text-[11px] sm:text-xs text-[#ACC8E5] flex-wrap gap-2">
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <span className="font-semibold text-white/70">Speed:</span>
                   {[0.75, 1, 1.25, 1.5, 2].map((spd) => (
                     <button
                       key={spd}
                       onClick={() => handleSpeedChange(spd)}
-                      className={`px-2 py-0.5 rounded font-bold transition-colors ${playbackSpeed === spd ? 'bg-[#ACC8E5] text-[#112A46]' : 'text-[#ACC8E5] hover:bg-white/10'}`}
+                      className={`px-1.5 py-0.5 rounded font-bold transition-colors ${playbackSpeed === spd ? 'bg-[#ACC8E5] text-[#112A46]' : 'text-[#ACC8E5] hover:bg-white/10'}`}
                     >
                       {spd}x
                     </button>
                   ))}
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <span className="text-[11px] text-[#64748B]">Streaming via SQL Video Link / CDN</span>
-                </div>
+                <span className="text-[10px] text-[#64748B]">Streaming HD</span>
               </div>
             </div>
           ) : (
             /* Text Lesson Header Card */
-            <div className="w-full bg-gradient-to-r from-[#112A46] to-[#071524] p-8 border-b border-white/10">
+            <div className="w-full bg-gradient-to-r from-[#112A46] to-[#071524] p-6 sm:p-8 border-b border-white/10">
               <div className="max-w-3xl">
                 <span className="pill pill-tint text-[10px] uppercase font-bold mb-2">
                   📖 Text-Based Lecture & Study Guide
                 </span>
-                <h2 className="h-display2 text-white mt-1">
+                <h2 className="h-display2 text-white mt-1 text-lg sm:text-2xl font-bold">
                   {activeLesson?.title}
                 </h2>
               </div>
@@ -305,9 +351,9 @@ export default function CoursePlayer({
           )}
 
           {/* Lesson Details & Text Notes */}
-          <div className="bg-white text-[#0B1B2E] p-8 md:p-10 flex-1">
+          <div className="bg-white text-[#0B1B2E] p-5 sm:p-8 md:p-10 flex-1">
             <div className="max-w-3xl">
-              <div className="flex items-center gap-2 mb-3">
+              <div className="flex items-center gap-2 mb-2">
                 <span className="pill pill-tint text-[10px] uppercase font-bold">
                   {activeLesson?.content_type || 'video'} lesson
                 </span>
@@ -318,13 +364,13 @@ export default function CoursePlayer({
                 )}
               </div>
 
-              <h1 className="h-display2 text-[#112A46] mb-4">
+              <h1 className="h-display2 text-[#112A46] text-lg sm:text-2xl font-bold mb-3">
                 {activeLesson?.title || 'Lesson Overview'}
               </h1>
 
-              <div className="text-[#334155] text-base leading-relaxed space-y-4">
+              <div className="text-[#334155] text-xs sm:text-sm md:text-base leading-relaxed space-y-4">
                 {activeLesson?.text_content ? (
-                  <div className="whitespace-pre-line bg-[#F8FAFC] p-6 rounded-2xl border border-[#E2E8F0] font-sans">
+                  <div className="whitespace-pre-line bg-[#F8FAFC] p-4 sm:p-6 rounded-2xl border border-[#E2E8F0] font-sans">
                     {activeLesson.text_content}
                   </div>
                 ) : (
@@ -333,7 +379,7 @@ export default function CoursePlayer({
                   </p>
                 )}
 
-                <div className="p-4 bg-[#F8FAFC] rounded-xl border border-[#E2E8F0] text-xs text-[#475569] leading-relaxed">
+                <div className="p-3.5 bg-[#F8FAFC] rounded-xl border border-[#E2E8F0] text-xs text-[#475569] leading-relaxed">
                   <strong className="text-[#112A46]">💡 Pro Tip:</strong> Complete each section checkpoint and test your code locally before continuing to the next module.
                 </div>
               </div>
@@ -341,75 +387,62 @@ export default function CoursePlayer({
           </div>
 
           {/* Bottom Navigation Toolbar */}
-          <div className="bg-white border-t border-[#E2E8F0] px-8 py-4 flex items-center justify-between shrink-0">
+          <div className="bg-white border-t border-[#E2E8F0] px-4 sm:px-8 py-3.5 flex items-center justify-between gap-2 shrink-0">
             <button
               onClick={handlePrev}
               disabled={currentIdx <= 0}
-              className="btn btn-secondary btn-sm font-bold"
+              className="btn btn-secondary btn-sm font-bold text-xs px-2.5 sm:px-4"
             >
-              ← Previous Lesson
+              ← Prev
             </button>
 
             <button
               onClick={handleMarkComplete}
-              className={`btn btn-sm font-bold ${isCompleted ? 'btn-primary bg-[#16A34A] hover:bg-[#15803D]' : 'btn-primary'}`}
+              className={`btn btn-sm font-bold text-xs px-3 sm:px-5 ${isCompleted ? 'btn-primary bg-[#16A34A] hover:bg-[#15803D]' : 'btn-primary'}`}
             >
-              {isCompleted ? '✓ Completed' : 'Mark as Complete'}
+              {isCompleted ? '✓ Done' : 'Mark Complete'}
             </button>
 
             <button
               onClick={handleNext}
               disabled={currentIdx >= allLessons.length - 1}
-              className="btn btn-secondary btn-sm font-bold"
+              className="btn btn-secondary btn-sm font-bold text-xs px-2.5 sm:px-4"
             >
-              Next Lesson →
+              Next →
             </button>
           </div>
         </main>
 
-        {/* Right: Course Content Curriculum Sidebar */}
+        {/* Right: Desktop Course Content Curriculum Sidebar */}
         {sidebarOpen && (
-          <aside className="w-80 md:w-96 bg-white text-[#0B1B2E] border-l border-[#E2E8F0] overflow-y-auto flex flex-col shrink-0">
-            <div className="p-5 border-b border-[#E2E8F0] font-bold text-sm text-[#112A46] bg-[#F8FAFC] flex justify-between items-center">
+          <aside className="hidden md:flex w-80 lg:w-96 bg-white text-[#0B1B2E] border-l border-[#E2E8F0] flex-col shrink-0">
+            <div className="p-4 border-b border-[#E2E8F0] font-bold text-xs sm:text-sm text-[#112A46] bg-[#F8FAFC] flex justify-between items-center">
               <span>Curriculum ({allLessons.length} lessons)</span>
               <span className="text-xs font-semibold text-[#16A34A]">{completedLessonIds.size}/{allLessons.length} done</span>
             </div>
 
-            <div className="flex-1">
-              {sections.map((sec, sIdx) => (
-                <div key={sec.id} className="border-b border-[#F1F5F9] last:border-none">
-                  <div className="px-5 py-3 bg-[#F8FAFC] font-bold text-xs text-[#475569] uppercase tracking-wider border-b border-[#E2E8F0]">
-                    Section {sIdx + 1}: {sec.title}
-                  </div>
-                  <div>
-                    {sec.lessons?.map((les) => {
-                      const isActive = activeLesson?.id === les.id
-                      const done = completedLessonIds.has(les.id)
-                      return (
-                        <div
-                          key={les.id}
-                          onClick={() => setActiveLesson(les)}
-                          className={`flex items-center gap-3 px-5 py-3.5 border-b border-[#F1F5F9] last:border-none cursor-pointer transition-colors text-sm ${
-                            isActive ? 'bg-[#EAF1FA] font-bold text-[#112A46] border-l-4 border-l-[#112A46]' : 'hover:bg-[#F8FAFC] text-[#334155]'
-                          }`}
-                        >
-                          {done ? (
-                            <span className="text-[#16A34A] font-bold text-sm shrink-0">✓</span>
-                          ) : (
-                            <PlayIcon size={14} color={isActive ? '#112A46' : '#94A3B8'} />
-                          )}
-                          <span className="truncate flex-1 font-medium">{les.title}</span>
-                          <span className="text-[11px] text-[#64748B] shrink-0 font-mono font-semibold">
-                            {les.duration_seconds ? `${Math.floor(les.duration_seconds / 60)}m` : 'Read'}
-                          </span>
-                        </div>
-                      )
-                    })}
-                  </div>
-                </div>
-              ))}
-            </div>
+            {renderCurriculumList(false)}
           </aside>
+        )}
+
+        {/* Mobile Slide-over Playlist Drawer */}
+        {mobilePlaylistOpen && (
+          <div className="md:hidden">
+            <div className="drawer-backdrop" onClick={() => setMobilePlaylistOpen(false)} />
+            <div className="fixed top-0 bottom-0 right-0 w-80 max-w-[85vw] bg-white text-[#0B1B2E] z-70 shadow-2xl flex flex-col animation-slide-left">
+              <div className="p-4 border-b border-[#E2E8F0] font-bold text-sm text-[#112A46] bg-[#F8FAFC] flex justify-between items-center">
+                <span>Curriculum ({allLessons.length} lessons)</span>
+                <button
+                  onClick={() => setMobilePlaylistOpen(false)}
+                  className="p-1 rounded-lg text-[#64748B] hover:text-[#0B1B2E]"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {renderCurriculumList(true)}
+            </div>
+          </div>
         )}
       </div>
     </div>

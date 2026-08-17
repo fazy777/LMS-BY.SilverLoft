@@ -78,46 +78,46 @@ export default function InstructorNewCourse({
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
+    <div className="max-w-2xl mx-auto space-y-5">
       <button
         onClick={() => (onBack ? onBack() : router.push('/instructor'))}
-        className="btn btn-ghost btn-sm text-[#64748B] hover:text-[#112A46] font-bold pl-0"
+        className="btn btn-ghost btn-sm text-[#64748B] hover:text-[#112A46] font-bold pl-0 text-xs"
       >
         ← Back to Studio
       </button>
 
-      <div className="card p-8 md:p-10 shadow-sm">
-        <h1 className="h-display2 text-[#112A46] mb-1">Create New Course</h1>
-        <p className="text-sm text-[#64748B] mb-6 font-medium">
+      <div className="card p-5 sm:p-8 md:p-10 shadow-sm bg-white">
+        <h1 className="h-display2 text-[#112A46] text-xl sm:text-2xl font-bold mb-1">Create New Course</h1>
+        <p className="text-xs sm:text-sm text-[#64748B] mb-5 font-medium">
           Draft your course title, pricing, and description. You will add curriculum modules and video lessons on the next screen.
         </p>
 
         {error && (
-          <div className="p-3.5 bg-[#FEE2E2] border border-[#FCA5A5] text-[#DC2626] rounded-xl text-sm font-bold mb-5">
+          <div className="p-3.5 bg-[#FEE2E2] border border-[#FCA5A5] text-[#DC2626] rounded-xl text-xs sm:text-sm font-bold mb-5">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
           <div className="field">
-            <label>Course Title</label>
+            <label className="text-xs sm:text-sm">Course Title</label>
             <input
               type="text"
               required
               placeholder="e.g. Master Enterprise Next.js 16 with Turbopack"
               value={title}
               onChange={e => setTitle(e.target.value)}
-              className="input text-sm bg-white"
+              className="input text-xs sm:text-sm bg-white"
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="field">
-              <label>Topic Category</label>
+              <label className="text-xs sm:text-sm">Topic Category</label>
               <select
                 value={categoryId}
                 onChange={e => setCategoryId(e.target.value)}
-                className="input text-sm bg-white cursor-pointer"
+                className="input text-xs sm:text-sm bg-white cursor-pointer"
               >
                 {categories.map(c => (
                   <option key={c.id} value={c.id}>{c.name}</option>
@@ -126,52 +126,52 @@ export default function InstructorNewCourse({
             </div>
 
             <div className="field">
-              <label>Price (USD $)</label>
+              <label className="text-xs sm:text-sm">Price (USD $)</label>
               <input
                 type="number"
                 min="0"
                 step="1"
                 value={priceDollars}
                 onChange={e => setPriceDollars(e.target.value)}
-                className="input text-sm bg-white"
+                className="input text-xs sm:text-sm bg-white"
               />
             </div>
           </div>
 
           <div className="field">
-            <label>Cover Thumbnail URL</label>
+            <label className="text-xs sm:text-sm">Cover Thumbnail URL</label>
             <input
               type="url"
               placeholder="https://..."
               value={thumbnailUrl}
               onChange={e => setThumbnailUrl(e.target.value)}
-              className="input text-sm bg-white"
+              className="input text-xs sm:text-sm bg-white"
             />
           </div>
 
           <div className="field">
-            <label>Overview & What Students Will Build</label>
+            <label className="text-xs sm:text-sm">Overview & What Students Will Build</label>
             <textarea
               rows={4}
               placeholder="Explain the objectives, technologies used, and final projects students will build..."
               value={description}
               onChange={e => setDescription(e.target.value)}
-              className="input h-auto py-3 text-sm bg-white resize-vertical"
+              className="input h-auto py-2.5 text-xs sm:text-sm bg-white resize-vertical"
             />
           </div>
 
-          <div className="pt-4 flex justify-end gap-3">
+          <div className="pt-3 flex flex-col-reverse sm:flex-row justify-end gap-3">
             <button
               type="button"
               onClick={() => (onBack ? onBack() : router.push('/instructor'))}
-              className="btn btn-secondary btn-sm font-bold"
+              className="btn btn-secondary btn-sm font-bold text-xs sm:text-sm h-10 w-full sm:w-auto"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="btn btn-primary btn-sm font-bold shadow-md"
+              className="btn btn-primary btn-sm font-bold shadow-md text-xs sm:text-sm h-10 w-full sm:w-auto"
             >
               {saving ? 'Creating Draft...' : 'Create Course & Build Curriculum →'}
             </button>

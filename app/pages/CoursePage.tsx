@@ -272,31 +272,31 @@ export default function CoursePage({
   const ratingVal = course.avg_rating ? Number(course.avg_rating).toFixed(1) : '4.8'
 
   return (
-    <div className="min-h-screen bg-[#F0F5FB]">
+    <div className="min-h-screen bg-[#F0F5FB] pb-24 md:pb-0">
       {/* ── TOP HERO BANNER ── */}
-      <div className="bg-gradient-to-r from-[#0B1B2E] via-[#112A46] to-[#1A3D64] text-white py-12 px-6 md:px-12 border-b border-[#1A3D64]">
+      <div className="bg-gradient-to-r from-[#0B1B2E] via-[#112A46] to-[#1A3D64] text-white py-8 sm:py-12 px-4 sm:px-6 md:px-12 border-b border-[#1A3D64]">
         <div className="wrap">
           <Link
             href="/courses"
-            className="inline-flex items-center gap-2 text-xs font-bold text-[#ACC8E5] hover:text-white mb-5 transition-colors uppercase tracking-wider"
+            className="inline-flex items-center gap-2 text-xs font-bold text-[#ACC8E5] hover:text-white mb-4 transition-colors uppercase tracking-wider"
           >
             ← Back to Courses
           </Link>
 
           <div className="max-w-3xl">
-            <span className="pill bg-white/20 text-[#ACC8E5] border border-white/25 mb-3 font-bold">
+            <span className="pill bg-white/20 text-[#ACC8E5] border border-white/25 mb-2.5 font-bold text-[10px]">
               {course.category?.name || 'Development'}
             </span>
 
-            <h1 className="h-display1 text-white my-3 leading-snug">
+            <h1 className="h-display1 text-white my-2 sm:my-3 text-2xl sm:text-3xl md:text-4xl font-extrabold leading-snug">
               {course.title}
             </h1>
 
-            <p className="text-[#C9D9EA] text-base md:text-[16px] mb-6 leading-relaxed">
+            <p className="text-[#C9D9EA] text-xs sm:text-sm md:text-base mb-5 leading-relaxed">
               {course.description}
             </p>
 
-            <div className="flex items-center gap-5 flex-wrap text-sm text-[#E2E8F0]">
+            <div className="flex items-center gap-3 sm:gap-5 flex-wrap text-xs sm:text-sm text-[#E2E8F0]">
               <div className="stars text-[#FBBF24]">
                 <span>★ {ratingVal}</span>
                 <span className="text-[#ACC8E5] font-normal ml-1">({course.review_count?.toLocaleString() || '12,480'} reviews)</span>
@@ -306,13 +306,13 @@ export default function CoursePage({
               <div className="text-[#C9D9EA]">• All Levels</div>
             </div>
 
-            <div className="flex items-center gap-3 mt-6 pt-5 border-t border-white/15 text-sm">
-              <div className="w-10 h-10 rounded-full bg-[#ACC8E5] text-[#112A46] flex items-center justify-center font-bold text-xs shrink-0">
+            <div className="flex items-center gap-3 mt-5 pt-4 border-t border-white/15 text-xs sm:text-sm">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#ACC8E5] text-[#112A46] flex items-center justify-center font-bold text-xs shrink-0">
                 {course.instructor?.display_name?.slice(0, 2).toUpperCase() || 'MC'}
               </div>
               <div>
-                <span className="text-xs text-[#ACC8E5] block leading-tight">Course Instructor</span>
-                <strong className="text-white font-bold text-sm leading-tight">{course.instructor?.display_name || 'Marta Coelho'}</strong>
+                <span className="text-[11px] text-[#ACC8E5] block leading-tight">Course Instructor</span>
+                <strong className="text-white font-bold text-xs sm:text-sm leading-tight">{course.instructor?.display_name || 'Marta Coelho'}</strong>
               </div>
             </div>
           </div>
@@ -320,14 +320,14 @@ export default function CoursePage({
       </div>
 
       {/* ── MAIN BODY & STICKY PURCHASE CARD ── */}
-      <div className="wrap py-10">
+      <div className="wrap py-6 sm:py-10">
         <div className="sales-layout">
           {/* Left: What You'll Learn, Curriculum, Reviews */}
-          <div>
+          <div className="min-w-0">
             {/* What you'll learn */}
-            <div className="card p-7 mb-8 shadow-sm">
-              <h2 className="h-section text-[#112A46] mb-5">What you will master in this course</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="card p-5 sm:p-7 mb-6 sm:mb-8 shadow-sm bg-white">
+              <h2 className="h-section text-[#112A46] text-base sm:text-lg font-bold mb-4">What you will master in this course</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                 {[
                   'Build production-ready, highly scalable applications from scratch',
                   'Architect clean modular systems with modern best practices',
@@ -335,7 +335,7 @@ export default function CoursePage({
                   'Deploy to enterprise cloud infrastructures with CI/CD automation',
                   'Lifetime access to all modules, cheat sheets, and future updates',
                 ].map((item, idx) => (
-                  <div key={idx} className="flex items-start gap-3 text-sm text-[#334155] leading-relaxed">
+                  <div key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-[#334155] leading-relaxed">
                     <span className="text-[#16A34A] font-bold shrink-0 mt-0.5">✓</span>
                     <span>{item}</span>
                   </div>
@@ -344,15 +344,15 @@ export default function CoursePage({
             </div>
 
             {/* Curriculum Accordion */}
-            <div className="mb-10">
-              <div className="flex justify-between items-baseline mb-4">
-                <h2 className="h-section text-[#112A46]">Course Content</h2>
-                <span className="text-xs font-bold text-[#64748B] uppercase tracking-wider">
+            <div className="mb-8 sm:mb-10">
+              <div className="flex flex-col sm:flex-row justify-between sm:items-baseline gap-1 mb-4">
+                <h2 className="h-section text-[#112A46] text-base sm:text-lg font-bold">Course Content</h2>
+                <span className="text-[11px] sm:text-xs font-bold text-[#64748B] uppercase tracking-wider">
                   {sections.length} sections • {totalLessons} lessons • {totalHours}h length
                 </span>
               </div>
 
-              <div id="curriculum" className="space-y-3">
+              <div id="curriculum" className="space-y-2.5">
                 {sections.map((sec, sIdx) => {
                   const isOpen = openSections[sec.id]
                   return (
@@ -362,10 +362,10 @@ export default function CoursePage({
                         onClick={() => toggleSection(sec.id)}
                       >
                         <div>
-                          <div className="font-bold text-sm text-[#112A46]">
+                          <div className="font-bold text-xs sm:text-sm text-[#112A46]">
                             Section {sIdx + 1}: {sec.title}
                           </div>
-                          <div className="text-xs text-[#64748B] mt-0.5">
+                          <div className="text-[11px] text-[#64748B] mt-0.5">
                             {sec.lessons?.length || 0} lessons
                           </div>
                         </div>
@@ -376,15 +376,15 @@ export default function CoursePage({
 
                       <div className="accordion-body">
                         {sec.lessons?.map((les) => (
-                          <div key={les.id} className="lesson-row">
-                            <PlayIcon size={15} color={les.is_preview ? '#16A34A' : '#64748B'} />
-                            <span className="font-medium text-sm text-[#0B1B2E]">{les.title}</span>
+                          <div key={les.id} className="lesson-row text-xs sm:text-sm">
+                            <PlayIcon size={14} color={les.is_preview ? '#16A34A' : '#64748B'} />
+                            <span className="font-medium text-[#0B1B2E] flex-1 truncate">{les.title}</span>
                             {les.is_preview && (
-                              <span className="pill pill-success text-[10px] py-0.5 px-2 font-bold">
+                              <span className="pill pill-success text-[9px] sm:text-[10px] py-0.5 px-2 font-bold shrink-0">
                                 Free Preview
                               </span>
                             )}
-                            <span className="dur font-mono">
+                            <span className="dur font-mono text-[11px] shrink-0">
                               {les.duration_seconds ? `${Math.floor(les.duration_seconds / 60)}:${(les.duration_seconds % 60).toString().padStart(2, '0')}` : 'Read'}
                             </span>
                           </div>
@@ -397,19 +397,19 @@ export default function CoursePage({
             </div>
 
             {/* Student Reviews & Star Breakdown */}
-            <div className="card p-7 shadow-sm">
-              <h2 className="h-section text-[#112A46] mb-6">Student Feedback & Ratings</h2>
+            <div className="card p-5 sm:p-7 shadow-sm bg-white">
+              <h2 className="h-section text-[#112A46] text-base sm:text-lg font-bold mb-5">Student Feedback & Ratings</h2>
 
-              <div className="flex flex-col sm:flex-row gap-8 items-center pb-6 border-b border-[#E2E8F0]">
-                <div className="text-center sm:text-left min-w-[140px]">
-                  <div className="font-display font-black text-5xl text-[#112A46]">{ratingVal}</div>
-                  <div className="stars text-[#FBBF24] my-2 text-base">
+              <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 items-center pb-6 border-b border-[#E2E8F0]">
+                <div className="text-center sm:text-left min-w-[120px]">
+                  <div className="font-display font-black text-4xl sm:text-5xl text-[#112A46]">{ratingVal}</div>
+                  <div className="stars text-[#FBBF24] my-1 text-base">
                     <span>★ ★ ★ ★ ★</span>
                   </div>
-                  <div className="text-xs font-bold text-[#64748B] uppercase tracking-wider">Course Rating</div>
+                  <div className="text-[11px] sm:text-xs font-bold text-[#64748B] uppercase tracking-wider">Course Rating</div>
                 </div>
 
-                <div className="flex-1 w-full space-y-2.5">
+                <div className="flex-1 w-full space-y-2">
                   {[
                     { stars: 5, pct: 78 },
                     { stars: 4, pct: 16 },
@@ -422,35 +422,35 @@ export default function CoursePage({
                       <div className="rating-bar-track">
                         <div className="rating-bar-fill" style={{ width: `${b.pct}%` }}></div>
                       </div>
-                      <span className="w-10 text-right text-[#64748B]">{b.pct}%</span>
+                      <span className="w-8 text-right text-[#64748B]">{b.pct}%</span>
                     </div>
                   ))}
                 </div>
               </div>
 
               {/* Reviews list */}
-              <div className="mt-6 space-y-5">
+              <div className="mt-5 space-y-4">
                 {reviews.map(r => (
-                  <div key={r.id} className="border-b border-[#F1F5F9] pb-5 last:border-none last:pb-0">
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="w-8 h-8 rounded-full bg-[#EAF1FA] text-[#112A46] flex items-center justify-center font-bold text-xs">
+                  <div key={r.id} className="border-b border-[#F1F5F9] pb-4 last:border-none last:pb-0">
+                    <div className="flex items-center gap-2.5 mb-1.5">
+                      <div className="w-7 h-7 rounded-full bg-[#EAF1FA] text-[#112A46] flex items-center justify-center font-bold text-[10px]">
                         {r.reviewer?.display_name?.slice(0, 2).toUpperCase() || 'ST'}
                       </div>
                       <div>
-                        <div className="font-bold text-sm text-[#0B1B2E]">{r.reviewer?.display_name || 'Verified Learner'}</div>
-                        <div className="stars text-xs text-[#FBBF24]">{'★'.repeat(r.rating || 5)}</div>
+                        <div className="font-bold text-xs sm:text-sm text-[#0B1B2E]">{r.reviewer?.display_name || 'Verified Learner'}</div>
+                        <div className="stars text-[11px] text-[#FBBF24]">{'★'.repeat(r.rating || 5)}</div>
                       </div>
                     </div>
-                    <p className="text-sm text-[#334155] leading-relaxed">{r.comment}</p>
+                    <p className="text-xs sm:text-sm text-[#334155] leading-relaxed">{r.comment}</p>
                   </div>
                 ))}
               </div>
             </div>
           </div>
 
-          {/* Right: Sticky Buy Card */}
+          {/* Right: Buy Card */}
           <div className="sticky-buy">
-            <div className="card modal-surface overflow-hidden">
+            <div className="card modal-surface overflow-hidden bg-white shadow-lg">
               <div
                 className="video-frame"
                 style={{
@@ -460,19 +460,19 @@ export default function CoursePage({
                 }}
               >
                 <div className="play-btn" onClick={handleDirectEnroll}>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
                     <polygon points="8,5 19,12 8,19" />
                   </svg>
                 </div>
               </div>
 
-              <div className="p-6">
-                <div className="font-display font-black text-3xl text-[#112A46] mb-4">
+              <div className="p-5 sm:p-6">
+                <div className="font-display font-black text-2xl sm:text-3xl text-[#112A46] mb-3">
                   {price}
                 </div>
 
                 {enrollError && (
-                  <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl mb-4 font-semibold">
+                  <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl mb-3 font-semibold">
                     {enrollError}
                   </div>
                 )}
@@ -480,7 +480,7 @@ export default function CoursePage({
                 {isEnrolled ? (
                   <button
                     onClick={() => router.push(`/learn/${course.slug || course.id}`)}
-                    className="btn btn-primary btn-block bg-[#16A34A] hover:bg-[#15803D] mb-4 font-bold"
+                    className="btn btn-primary btn-block bg-[#16A34A] hover:bg-[#15803D] mb-4 font-bold text-xs sm:text-sm"
                   >
                     ✓ Enrolled — Go to Course Player →
                   </button>
@@ -489,7 +489,7 @@ export default function CoursePage({
                     <button
                       onClick={handleEnrollStripe}
                       disabled={enrolling || directEnrolling}
-                      className="btn btn-primary btn-block text-base font-bold shadow-md"
+                      className="btn btn-primary btn-block text-xs sm:text-sm font-bold shadow-md cursor-pointer"
                     >
                       {enrolling ? 'Connecting to Stripe...' : 'Enroll with Stripe Checkout →'}
                     </button>
@@ -497,28 +497,28 @@ export default function CoursePage({
                     <button
                       onClick={handleDirectEnroll}
                       disabled={enrolling || directEnrolling}
-                      className="btn btn-secondary btn-block text-xs font-bold"
+                      className="btn btn-secondary btn-block text-xs font-bold cursor-pointer"
                     >
                       {directEnrolling ? 'Enrolling...' : '⚡ Instant Free Trial / Enroll'}
                     </button>
                   </div>
                 )}
 
-                <p className="text-center text-xs font-semibold text-[#64748B]">
+                <p className="text-center text-[11px] font-semibold text-[#64748B]">
                   30-Day Money-Back Guarantee
                 </p>
 
-                <div className="border-t border-[#E2E8F0] mt-5 pt-4 space-y-3 text-xs text-[#334155] font-semibold">
-                  <div className="flex items-center gap-2.5">
+                <div className="border-t border-[#E2E8F0] mt-4 pt-3.5 space-y-2.5 text-xs text-[#334155] font-semibold">
+                  <div className="flex items-center gap-2">
                     <span className="text-[#16A34A] font-bold">✓</span> {totalHours} hours on-demand video
                   </div>
-                  <div className="flex items-center gap-2.5">
+                  <div className="flex items-center gap-2">
                     <span className="text-[#16A34A] font-bold">✓</span> Full lifetime access & updates
                   </div>
-                  <div className="flex items-center gap-2.5">
+                  <div className="flex items-center gap-2">
                     <span className="text-[#16A34A] font-bold">✓</span> Verified certificate of completion
                   </div>
-                  <div className="flex items-center gap-2.5">
+                  <div className="flex items-center gap-2">
                     <span className="text-[#16A34A] font-bold">✓</span> Access on mobile and desktop
                   </div>
                 </div>
@@ -526,6 +526,31 @@ export default function CoursePage({
             </div>
           </div>
         </div>
+      </div>
+
+      {/* ── Mobile Sticky Bottom Enrollment Bar (< 960px) ── */}
+      <div className="mobile-sticky-cta">
+        <div>
+          <span className="text-[10px] text-[#64748B] block leading-none font-bold uppercase">Total Price</span>
+          <span className="font-display font-black text-xl text-[#112A46] leading-tight">{price}</span>
+        </div>
+
+        {isEnrolled ? (
+          <button
+            onClick={() => router.push(`/learn/${course.slug || course.id}`)}
+            className="btn btn-primary btn-sm bg-[#16A34A] hover:bg-[#15803D] font-bold text-xs px-4"
+          >
+            ✓ Open Player
+          </button>
+        ) : (
+          <button
+            onClick={handleEnrollStripe}
+            disabled={enrolling || directEnrolling}
+            className="btn btn-primary btn-sm font-bold text-xs px-4 shadow-sm"
+          >
+            {enrolling ? 'Connecting...' : 'Enroll Now →'}
+          </button>
+        )}
       </div>
     </div>
   )

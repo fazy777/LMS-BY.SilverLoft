@@ -150,36 +150,37 @@ export default function HomePage({
   return (
     <div className="min-h-screen bg-[#F0F5FB]">
       {/* ── HERO SECTION ── */}
-      <section className="hero">
+      <section className="hero py-10 sm:py-14 md:py-16">
         <div className="wrap hero-grid">
           <div>
-            <div className="pill pill-tint inline-flex items-center gap-2 mb-4">
+            <div className="pill pill-tint inline-flex items-center gap-2 mb-3 sm:mb-4 text-[10px] sm:text-xs">
               <span className="w-2 h-2 rounded-full bg-[#16A34A] animate-pulse"></span>
               Admin-reviewed, quality-gated courses
             </div>
 
-            <h1 className="h-display1 text-[#0B1B2E] my-3 leading-snug">
+            <h1 className="h-display1 text-[#0B1B2E] my-2 sm:my-3 text-2xl sm:text-3xl md:text-4xl lg:text-[42px] font-extrabold leading-tight">
               Skills that move your career forward — taught by people who use them daily.
             </h1>
 
-            <p className="text-[#334155] text-base md:text-[16px] leading-relaxed mb-6 max-w-xl">
+            <p className="text-[#334155] text-xs sm:text-sm md:text-base leading-relaxed mb-6 max-w-xl">
               Over 40,000 self-paced courses across web development, cloud architecture, product design, and AI. Learn at your pace, build real projects, and keep lifetime access.
             </p>
 
             {/* Search Box */}
-              <span className="icon relative right-7 top-9 z-10 translate-y-1/2 text-[#64748B] pointer-events-none transition-colors">
-                <SearchIcon size={20} color={isSearchFocused ? '#112A46' : '#64748B'} />
+            <form onSubmit={handleSearch} className="relative max-w-lg mb-5 sm:mb-6">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 z-10 text-[#64748B] pointer-events-none transition-colors">
+                <SearchIcon size={18} color={isSearchFocused ? '#112A46' : '#64748B'} />
               </span>
-            <form onSubmit={handleSearch} className="input-icon-wrap max-w-lg mb-6 relative">
+
               <input
-                className={`input shadow-[0_6px_24px_rgba(17,42,70,0.07)] h-14 rounded-full text-[#0B1B2E] bg-white border transition-all text-sm md:text-base outline-none ${
+                className={`input w-full shadow-[0_6px_24px_rgba(17,42,70,0.07)] h-12 sm:h-14 rounded-full text-[#0B1B2E] bg-white border transition-all text-xs sm:text-sm md:text-base outline-none ${
                   isSearchFocused
-                    ? 'border-[#112A46] ring-4 ring-[#112A46]/10 pl-12 pr-12'
+                    ? 'border-[#112A46] ring-4 ring-[#112A46]/10 pl-11 pr-11'
                     : query
-                    ? 'border-[#CBD5E1] pl-12 pr-12'
-                    : 'border-[#CBD5E1] pl-12 pr-28 hover:border-[#94A3B8]'
+                    ? 'border-[#CBD5E1] pl-11 pr-11'
+                    : 'border-[#CBD5E1] pl-11 pr-24 hover:border-[#94A3B8]'
                 }`}
-                placeholder="Search 40,000+ courses, skills, tools (e.g. Next.js, Python, Figma)..."
+                placeholder="Search courses, skills, tools..."
                 value={query}
                 onChange={e => setQuery(e.target.value)}
                 onFocus={() => setIsSearchFocused(true)}
@@ -191,7 +192,7 @@ export default function HomePage({
                 <button
                   type="button"
                   onClick={() => setQuery('')}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full bg-[#E2E8F0] hover:bg-[#CBD5E1] text-[#64748B] hover:text-[#0B1B2E] text-xs font-bold transition-colors cursor-pointer"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full bg-[#E2E8F0] hover:bg-[#CBD5E1] text-[#64748B] hover:text-[#0B1B2E] text-xs font-bold transition-colors cursor-pointer"
                   aria-label="Clear search"
                 >
                   ✕
@@ -202,21 +203,25 @@ export default function HomePage({
               {!isSearchFocused && !query && (
                 <button
                   type="submit"
-                  className="absolute top-1/2 -translate-y-1/2 btn btn-primary btn-sm rounded-full px-5 h-10 font-bold shadow-sm cursor-pointer transition-all duration-200"
+                  className="absolute right-1.5 top-1/2 -translate-y-1/2 btn btn-primary btn-sm rounded-full px-4 h-9 sm:h-10 text-xs font-bold shadow-sm cursor-pointer transition-all duration-200"
                 >
                   Search
                 </button>
               )}
             </form>
 
-            {/* Category Filter Pills */}
-            <div className="category-pills">
+            {/* Category Filter Pills (Horizontal scroll on mobile) */}
+            <div className="flex flex-nowrap sm:flex-wrap gap-2 overflow-x-auto no-scrollbar py-1">
               {categories.map((c) => {
                 const isActive = activeCategory === c.slug
                 return (
                   <button
                     key={c.id}
-                    className={isActive ? 'active' : ''}
+                    className={`whitespace-nowrap px-3.5 py-2 rounded-full text-xs font-bold border transition-all cursor-pointer ${
+                      isActive
+                        ? 'bg-[#112A46] text-white border-[#112A46] shadow-sm'
+                        : 'bg-white text-[#334155] border-[#E2E8F0] hover:border-[#CBD5E1]'
+                    }`}
                     onClick={() => {
                       const next = isActive ? null : c.slug
                       setActiveCategory(next)
@@ -274,25 +279,25 @@ export default function HomePage({
       </section>
 
       {/* ── STATS STRIP ── */}
-      <section className="bg-white border-b border-[#E2E8F0] py-7">
-        <div className="wrap flex justify-around items-center flex-wrap gap-6">
+      <section className="bg-white border-b border-[#E2E8F0] py-6 sm:py-8">
+        <div className="wrap grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 text-center">
           {STATS.map(({ value, label }) => (
-            <div key={label} className="text-center">
-              <div className="font-display font-black text-2xl md:text-3xl text-[#112A46] leading-tight">{value}</div>
-              <div className="text-xs font-bold text-[#64748B] mt-1 uppercase tracking-wider">{label}</div>
+            <div key={label} className="p-2">
+              <div className="font-display font-black text-xl sm:text-2xl md:text-3xl text-[#112A46] leading-tight">{value}</div>
+              <div className="text-[10px] sm:text-xs font-bold text-[#64748B] mt-1 uppercase tracking-wider">{label}</div>
             </div>
           ))}
         </div>
       </section>
 
       {/* ── FEATURED COURSES SECTION ── */}
-      <section className="wrap py-14">
-        <div className="flex items-baseline justify-between mb-8">
+      <section className="wrap py-10 sm:py-14">
+        <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-3 mb-6 sm:mb-8">
           <div>
-            <h2 className="h-display2 text-[#112A46]">Featured Courses</h2>
-            <p className="text-sm text-[#64748B] mt-1 font-medium">Carefully curated by industry leaders and verified by administrators</p>
+            <h2 className="h-display2 text-[#112A46] text-xl sm:text-2xl md:text-3xl font-extrabold">Featured Courses</h2>
+            <p className="text-xs sm:text-sm text-[#64748B] mt-1 font-medium">Carefully curated by industry leaders and verified by administrators</p>
           </div>
-          <Link href="/courses" className="btn btn-ghost btn-sm font-bold text-[#112A46]">
+          <Link href="/courses" className="btn btn-ghost btn-sm font-bold text-[#112A46] text-xs sm:text-sm self-start sm:self-auto pl-0 sm:pl-3">
             Browse all courses →
           </Link>
         </div>
@@ -312,32 +317,32 @@ export default function HomePage({
                     backgroundImage: `linear-gradient(180deg, rgba(17,42,70,0.1) 0%, rgba(11,27,46,0.65) 100%), url(${c.thumbnail_url || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=520&h=292&fit=crop'})`,
                   }}
                 >
-                  <span className="pill bg-white/25 text-white backdrop-blur-md border border-white/30 font-bold">
+                  <span className="pill bg-white/25 text-white backdrop-blur-md border border-white/30 font-bold text-[10px]">
                     {c.category?.name || 'Development'}
                   </span>
                 </div>
 
                 <div className="course-body">
-                  <h3 className="course-title text-[#0B1B2E]">
+                  <h3 className="course-title text-[#0B1B2E] text-sm sm:text-base">
                     {c.title}
                   </h3>
 
-                  <div className="course-instr text-[#64748B]">
+                  <div className="course-instr text-[#64748B] text-xs">
                     <span className="mini-avatar bg-[#112A46] text-white flex items-center justify-center text-[10px] font-bold">
                       {c.instructor?.display_name?.slice(0, 2).toUpperCase() || 'SL'}
                     </span>
                     <span className="truncate">{c.instructor?.display_name || 'Silver Loft Instructor'}</span>
                   </div>
 
-                  <div className="course-meta-row">
+                  <div className="course-meta-row text-xs">
                     <div className="stars">
                       <span>★ {c.avg_rating ? Number(c.avg_rating).toFixed(1) : '4.8'}</span>
-                      <span className="text-[#64748B] text-[11.5px] font-normal">({c.review_count?.toLocaleString() || '1,240'})</span>
+                      <span className="text-[#64748B] text-[11px] font-normal">({c.review_count?.toLocaleString() || '1,240'})</span>
                     </div>
                   </div>
 
                   <div className="course-meta-row pt-2.5 mt-auto border-t border-[#F1F5F9]">
-                    <span className="price text-[#112A46]">{price}</span>
+                    <span className="price text-[#112A46] text-base">{price}</span>
                     <span className="text-xs font-bold text-[#112A46] hover:underline">Enroll Now →</span>
                   </div>
                 </div>
@@ -348,19 +353,19 @@ export default function HomePage({
       </section>
 
       {/* ── TEACH ON SILVER LOFT CTA BANNER ── */}
-      <section className="wrap pb-16">
-        <div className="card modal-surface bg-gradient-to-br from-[#112A46] via-[#16385C] to-[#0B1B2E] p-8 md:p-12 text-white flex flex-col md:flex-row items-center justify-between gap-8">
+      <section className="wrap pb-12 sm:pb-16">
+        <div className="card modal-surface bg-gradient-to-br from-[#112A46] via-[#16385C] to-[#0B1B2E] p-6 sm:p-8 md:p-12 text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-6 sm:gap-8">
           <div className="max-w-xl">
-            <span className="pill bg-white/20 text-[#ACC8E5] border border-white/25 mb-3 font-bold">
+            <span className="pill bg-white/20 text-[#ACC8E5] border border-white/25 mb-2 sm:mb-3 font-bold text-[10px]">
               Teach on Silver Loft
             </span>
-            <h2 className="h-display2 text-white my-3 leading-snug">
+            <h2 className="h-display2 text-white my-2 sm:my-3 text-xl sm:text-2xl md:text-3xl font-extrabold leading-snug">
               Turn your expertise into recurring income — no upfront approval needed to start building.
             </h2>
-            <p className="text-[#C9D9EA] text-sm md:text-base leading-relaxed mb-4">
+            <p className="text-[#C9D9EA] text-xs sm:text-sm md:text-base leading-relaxed mb-4">
               Build your video curriculum, set your price, and submit for quick administrative review. You keep control over your courses, and receive automated payouts via Stripe Connect.
             </p>
-            <div className="flex gap-4 flex-wrap text-xs text-[#ACC8E5] font-bold">
+            <div className="flex gap-3 sm:gap-4 flex-wrap text-xs text-[#ACC8E5] font-bold">
               <span>✓ Keep 85% of sales</span>
               <span>✓ Instant video streaming</span>
               <span>✓ Automated payouts</span>
@@ -369,7 +374,7 @@ export default function HomePage({
 
           <Link
             href="/instructor"
-            className="btn btn-primary bg-white text-[#112A46] hover:bg-[#F0F5FB] px-8 h-12 flex-shrink-0 text-base font-bold shadow-lg"
+            className="btn btn-primary bg-white text-[#112A46] hover:bg-[#F0F5FB] px-6 sm:px-8 h-11 sm:h-12 flex-shrink-0 text-xs sm:text-base font-bold shadow-lg w-full md:w-auto"
           >
             Become an Instructor →
           </Link>
@@ -377,26 +382,26 @@ export default function HomePage({
       </section>
 
       {/* ── TESTIMONIALS SECTION ── */}
-      <section className="wrap pb-20">
-        <div className="text-center mb-10">
-          <h2 className="h-display2 text-[#112A46]">What Our Students Say</h2>
-          <p className="text-sm text-[#64748B] mt-1 font-medium">Real reviews from professionals who upgraded their skill set on Silver Loft</p>
+      <section className="wrap pb-14 sm:pb-20">
+        <div className="text-center mb-8 sm:mb-10">
+          <h2 className="h-display2 text-[#112A46] text-xl sm:text-2xl md:text-3xl font-extrabold">What Our Students Say</h2>
+          <p className="text-xs sm:text-sm text-[#64748B] mt-1 font-medium">Real reviews from professionals who upgraded their skill set on Silver Loft</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
           {TESTIMONIALS.map((t) => (
-            <div key={t.name} className="card p-6 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
+            <div key={t.name} className="card p-5 sm:p-6 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow bg-white">
               <div>
-                <div className="text-3xl text-[#ACC8E5] font-serif leading-none mb-3">“</div>
-                <p className="text-sm text-[#334155] mb-6 leading-relaxed">{t.quote}</p>
+                <div className="text-3xl text-[#ACC8E5] font-serif leading-none mb-2 sm:mb-3">“</div>
+                <p className="text-xs sm:text-sm text-[#334155] mb-5 leading-relaxed">{t.quote}</p>
               </div>
               <div className="flex items-center gap-3 pt-4 border-t border-[#F1F5F9]">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#ACC8E5] to-[#112A46] text-white flex items-center justify-center font-bold text-xs">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-tr from-[#ACC8E5] to-[#112A46] text-white flex items-center justify-center font-bold text-xs">
                   {t.avatar}
                 </div>
                 <div>
-                  <div className="font-bold text-sm text-[#0B1B2E]">{t.name}</div>
-                  <div className="text-xs text-[#64748B]">{t.role}</div>
+                  <div className="font-bold text-xs sm:text-sm text-[#0B1B2E]">{t.name}</div>
+                  <div className="text-[11px] sm:text-xs text-[#64748B]">{t.role}</div>
                 </div>
               </div>
             </div>

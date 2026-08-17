@@ -21,9 +21,11 @@ export default function AccountPage({ onBack }: { onBack?: () => void }) {
         setUser(json.data)
         setDisplayName(json.data.display_name || '')
         setBio(json.data.instructor_profile?.bio || '')
+      } else {
+        setUser(null)
       }
     } catch (e) {
-      console.error(e)
+      setUser(null)
     } finally {
       setLoading(false)
     }
@@ -84,8 +86,25 @@ export default function AccountPage({ onBack }: { onBack?: () => void }) {
 
   if (loading) {
     return (
-      <div className="text-center py-20 text-[#64748B] font-semibold">
+      <div className="text-center py-20 text-[#64748B] font-semibold text-sm">
+        <div className="w-8 h-8 rounded-full border-3 border-[#112A46] border-t-transparent animate-spin mx-auto mb-3"></div>
         Loading account details...
+      </div>
+    )
+  }
+
+  if (!user) {
+    return (
+      <div className="card p-8 max-w-md mx-auto text-center bg-white shadow-sm">
+        <div className="text-3xl mb-3">🔒</div>
+        <h2 className="h-card text-lg font-bold text-[#112A46] mb-2">Sign in Required</h2>
+        <p className="text-xs text-[#64748B] mb-5">Please log in to manage your account profile and credentials.</p>
+        <button
+          onClick={() => router.push('/login?redirect=/account')}
+          className="btn btn-primary btn-sm font-bold w-full"
+        >
+          Sign In →
+        </button>
       </div>
     )
   }
@@ -93,67 +112,68 @@ export default function AccountPage({ onBack }: { onBack?: () => void }) {
   const initials = (displayName || user?.email || 'AJ').slice(0, 2).toUpperCase()
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
+    <div className="max-w-2xl mx-auto space-y-5">
       <button
         onClick={() => (onBack ? onBack() : router.push('/dashboard'))}
-        className="btn btn-ghost btn-sm text-[#64748B] hover:text-[#112A46] font-bold pl-0"
+        className="btn btn-ghost btn-sm text-[#64748B] hover:text-[#112A46] font-bold pl-0 text-xs"
       >
         ← Back to Dashboard
       </button>
 
-      <div className="card p-8 md:p-10 shadow-sm">
+      <div className="card p-5 sm:p-8 md:p-10 shadow-sm bg-white">
         {/* Header & Avatar */}
-        <div className="flex items-center gap-5 pb-6 mb-6 border-b border-[#F1F5F9]">
-          <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-[#ACC8E5] to-[#112A46] text-white flex items-center justify-center font-black text-xl shrink-0 shadow-sm">
+        <div className="flex items-center gap-4 sm:gap-5 pb-5 sm:pb-6 mb-5 sm:mb-6 border-b border-[#F1F5F9]">
+          <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-tr from-[#ACC8E5] to-[#112A46] text-white flex items-center justify-center font-black text-base sm:text-xl shrink-0 shadow-sm">
             {initials}
           </div>
-          <div>
-            <h1 className="h-display2 text-[#112A46] leading-tight">
+          <div className="min-w-0">
+            <h1 className="h-display2 text-[#112A46] text-lg sm:text-2xl font-bold leading-tight truncate">
               {user?.display_name || 'Account Settings'}
             </h1>
-            <div className="text-xs text-[#64748B] mt-1 font-medium">
+            <div className="text-xs text-[#64748B] mt-0.5 font-medium truncate">
               {user?.email} · <span className="font-bold text-[#112A46] capitalize">{user?.is_admin ? 'Administrator' : user?.is_instructor ? 'Instructor' : 'Student'}</span>
             </div>
           </div>
         </div>
 
         {feedback && (
-          <div className="p-3.5 bg-[#DCFCE7] border border-[#86EFAC] text-[#16A34A] rounded-xl text-sm font-bold mb-5">
+          <div className="p-3.5 bg-[#DCFCE7] border border-[#86EFAC] text-[#16A34A] rounded-xl text-xs sm:text-sm font-bold mb-5">
             {feedback}
           </div>
         )}
         {error && (
-          <div className="p-3.5 bg-[#FEE2E2] border border-[#FCA5A5] text-[#DC2626] rounded-xl text-sm font-bold mb-5">
+          <div className="p-3.5 bg-[#FEE2E2] border border-[#FCA5A5] text-[#DC2626] rounded-xl text-xs sm:text-sm font-bold mb-5">
             {error}
           </div>
         )}
 
         {/* Profile Form */}
-        <form onSubmit={handleUpdateProfile} className="space-y-4 mb-8">
+        <form onSubmit={handleUpdateProfile} className="space-y-4 mb-6 sm:mb-8">
           <div className="field">
-            <label>Display Name</label>
+            <label className="text-xs sm:text-sm">Display Name</label>
             <input
               type="text"
               value={displayName}
               onChange={e => setDisplayName(e.target.value)}
-              className="input bg-white text-[#0B1B2E]"
+              className="input bg-white text-[#0B1B2E] text-xs sm:text-sm"
+              placeholder="Your full name"
             />
           </div>
 
           <div className="field">
-            <label>Email Address (Managed by Firebase Auth)</label>
+            <label className="text-xs sm:text-sm">Email Address (Managed by Firebase Auth)</label>
             <input
               type="email"
               value={user?.email || ''}
               disabled
-              className="input bg-[#F8FAFC] text-[#64748B] cursor-not-allowed border-[#CBD5E1]"
+              className="input bg-[#F8FAFC] text-[#64748B] cursor-not-allowed border-[#CBD5E1] text-xs sm:text-sm"
             />
           </div>
 
           <button
             type="submit"
             disabled={saving}
-            className="btn btn-primary btn-sm font-bold shadow-sm"
+            className="btn btn-primary btn-sm font-bold shadow-sm text-xs sm:text-sm h-10 w-full sm:w-auto"
           >
             {saving ? 'Saving...' : 'Save Profile Changes'}
           </button>
@@ -161,12 +181,12 @@ export default function AccountPage({ onBack }: { onBack?: () => void }) {
 
         {/* Upgrade to Instructor Section */}
         {!user?.is_instructor && !user?.is_admin && (
-          <div className="border-t border-[#F1F5F9] pt-6">
-            <div className="card p-6 bg-[#EAF1FA] border-[#ACC8E5]">
-              <h3 className="h-card text-base text-[#112A46] mb-1 font-bold">
+          <div className="border-t border-[#F1F5F9] pt-5 sm:pt-6">
+            <div className="card p-4 sm:p-6 bg-[#EAF1FA] border-[#ACC8E5]">
+              <h3 className="h-card text-sm sm:text-base text-[#112A46] mb-1 font-bold">
                 Become an Instructor
               </h3>
-              <p className="text-xs text-[#334155] mb-4 leading-relaxed font-medium">
+              <p className="text-xs text-[#334155] mb-3 leading-relaxed font-medium">
                 Share your technical knowledge and earn revenue by publishing self-paced video courses on Silver Loft. Instant self-serve activation.
               </p>
 
@@ -181,7 +201,7 @@ export default function AccountPage({ onBack }: { onBack?: () => void }) {
               <button
                 onClick={handleBecomeInstructor}
                 disabled={applying}
-                className="btn btn-primary btn-sm font-bold"
+                className="btn btn-primary btn-sm font-bold text-xs w-full sm:w-auto"
               >
                 {applying ? 'Activating Instructor Account...' : 'Activate Instructor Account →'}
               </button>
