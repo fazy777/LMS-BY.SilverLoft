@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  /* config options here */
+  serverExternalPackages: ['firebase-admin', 'mysql2', 'stripe'],
 };
 
 export default nextConfig;
