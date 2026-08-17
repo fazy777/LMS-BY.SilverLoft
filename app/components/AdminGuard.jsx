@@ -12,11 +12,11 @@ export default function AdminGuard({ children }) {
   useEffect(() => {
     fetch('/api/v1/users/me')
       .then(res => {
-        if (res.status === 401) {
+        if (!res.ok) {
           router.push('/login?redirect=/admin')
           return null
         }
-        return res.json()
+        return res.json().catch(() => null)
       })
       .then(json => {
         if (!json) return

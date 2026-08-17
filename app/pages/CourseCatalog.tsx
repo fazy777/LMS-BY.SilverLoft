@@ -77,9 +77,9 @@ export default function CourseCatalog({
   // Fetch categories
   useEffect(() => {
     fetch('/api/v1/categories')
-      .then(res => res.json())
+      .then(res => (res.ok ? res.json().catch(() => null) : null))
       .then(json => {
-        if (json.success && Array.isArray(json.data) && json.data.length > 0) {
+        if (json?.success && Array.isArray(json.data) && json.data.length > 0) {
           setCategories(json.data)
         } else {
           setCategories([
@@ -131,10 +131,10 @@ export default function CourseCatalog({
     params.set('limit', '50')
 
     fetch(`/api/v1/courses?${params.toString()}`)
-      .then(res => res.json())
+      .then(res => (res.ok ? res.json().catch(() => null) : null))
       .then(json => {
         if (isCancelled) return
-        if (json.success && Array.isArray(json.data?.courses)) {
+        if (json?.success && Array.isArray(json.data?.courses)) {
           setCourses(json.data.courses)
         } else {
           setCourses(FALLBACK_COURSES)

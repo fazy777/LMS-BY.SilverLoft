@@ -66,9 +66,9 @@ export default function AppLayout({ children }) {
 
     // Fetch active user profile from SQL
     fetch('/api/v1/users/me')
-      .then(res => res.json())
+      .then(res => (res.ok ? res.json().catch(() => null) : null))
       .then(json => {
-        if (json.success && json.data) {
+        if (json?.success && json?.data) {
           setUser(json.data)
           if (pathname?.startsWith('/instructor') && json.data.is_instructor) {
             setRole('instructor')

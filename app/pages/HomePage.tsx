@@ -81,9 +81,9 @@ export default function HomePage({
   useEffect(() => {
     // 1. Fetch categories
     fetch('/api/v1/categories')
-      .then(res => res.json())
+      .then(res => (res.ok ? res.json().catch(() => null) : null))
       .then(json => {
-        if (json.success && Array.isArray(json.data) && json.data.length > 0) {
+        if (json?.success && Array.isArray(json.data) && json.data.length > 0) {
           setCategories(json.data)
         } else {
           setCategories([
@@ -109,9 +109,9 @@ export default function HomePage({
 
     // 2. Fetch courses
     fetch('/api/v1/courses?limit=8&sort=popular')
-      .then(res => res.json())
+      .then(res => (res.ok ? res.json().catch(() => null) : null))
       .then(json => {
-        if (json.success && Array.isArray(json.data?.courses) && json.data.courses.length > 0) {
+        if (json?.success && Array.isArray(json.data?.courses) && json.data.courses.length > 0) {
           setCourses(json.data.courses)
         } else {
           setCourses(FALLBACK_COURSES as any)

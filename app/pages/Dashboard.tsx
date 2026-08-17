@@ -28,9 +28,9 @@ export default function Dashboard({ onBrowse }: { onBrowse?: () => void }) {
   useEffect(() => {
     // 1. Fetch current user
     fetch('/api/v1/users/me')
-      .then(res => res.json())
+      .then(res => (res.ok ? res.json().catch(() => null) : null))
       .then(json => {
-        if (json.success && json.data) {
+        if (json?.success && json?.data) {
           setUser(json.data)
         } else {
           setUser(null)
@@ -42,9 +42,9 @@ export default function Dashboard({ onBrowse }: { onBrowse?: () => void }) {
 
     // 2. Fetch genuine student enrollments from SQL database
     fetch('/api/v1/enrollments?limit=50')
-      .then(res => res.json())
+      .then(res => (res.ok ? res.json().catch(() => null) : null))
       .then(json => {
-        if (json.success && Array.isArray(json.data?.enrollments)) {
+        if (json?.success && Array.isArray(json.data?.enrollments)) {
           // Keep genuine enrollments directly (empty array if 0 courses enrolled)
           setEnrollments(json.data.enrollments)
         } else {
