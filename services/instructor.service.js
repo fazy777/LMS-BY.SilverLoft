@@ -51,14 +51,22 @@ export async function getInstructorProfile(userId) {
 /** Wrap raw Stripe API failures so internals are informative and helpful. */
 function stripeFailure(err) {
     console.error('[instructor] Stripe API error:', err?.message ?? err);
-    if (err?.message?.includes("signed up for Connect")) {
+    const msg = err?.message || '';
+    if (msg.includes("Accounts v1") || msg.includes("feat_accounts_v1_support")) {
         throw new AppError(
-            'STRIPE_CONNECT_REQUIRED',
-            'Stripe Connect is not enabled on your Stripe account. Please activate Connect at https://dashboard.stripe.com/connect or use instant test verification.',
+            'STRIPE_ACCOUNTS_V1_REQUIRED',
+            'Your Stripe account requires Accounts v1 support enabled. Enable it in one click at https://dashboard.stripe.com/settings/features/feat_accounts_v1_support, or use Instant Sandbox Verification.',
             400
         );
     }
-    throw new AppError('STRIPE_ERROR', err?.message || 'Stripe request failed. Please try again.', 502);
+    if (msg.includes("signed up for Connect")) {
+        throw new AppError(
+            'STRIPE_CONNECT_REQUIRED',
+            'Stripe Connect is not enabled on your Stripe account. Please activate Connect at https://dashboard.stripe.com/connect or use Instant Sandbox Verification.',
+            400
+        );
+    }
+    throw new AppError('STRIPE_ERROR', msg || 'Stripe request failed. Please try again.', 502);
 }
 
 /**
@@ -89,11 +97,43 @@ export async function startStripeOnboarding(userId, { refreshUrl, returnUrl, tes
     try {
         if (!accountId || accountId.startsWith('acct_test_')) {
             const [userRows] = await query('SELECT email FROM users WHERE id = ? LIMIT 1', [userId]);
-            const account = await stripe.accounts.create({
-                type: 'express',
-                email: userRows[0]?.email ?? undefined,
-                metadata: { user_id: String(userId) },
-            });
+            const userEmail = userRows[0]?.email;
+
+            let account;
+            try {
+                // Method 1: Try modern Controller-based Express configuration
+                account = await stripe.accounts.create({
+                    controller: {
+                        stripe_dashboard: {
+                            type: 'express',
+                        },
+                        fees: {
+                            payer: 'application',
+                        },
+                        losses: {
+                            payments: 'application',
+                        },
+                        requirement_collection: 'stripe',
+                    },
+                    capabilities: {
+                        transfers: { requested: true },
+                    },
+                    email: userEmail || undefined,
+                    metadata: { user_id: String(userId) },
+                });
+            } catch (controllerErr) {
+                // Method 2: Fallback to classic v1 type: 'express'
+                try {
+                    account = await stripe.accounts.create({
+                        type: 'express',
+                        email: userEmail || undefined,
+                        metadata: { user_id: String(userId) },
+                    });
+                } catch (v1Err) {
+                    throw controllerErr;
+                }
+            }
+
             accountId = account.id;
             await query(
                 'UPDATE instructor_profiles SET stripe_connect_account_id = ? WHERE user_id = ?',
