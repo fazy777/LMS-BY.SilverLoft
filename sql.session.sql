@@ -158,4 +158,13 @@ CREATE TABLE payout_ledger_entries (
     INDEX idx_payout (payout_id),
     INDEX idx_status (status)
 );
+INSERT INTO categories (name, slug) VALUES
+('Development', 'development'),
+('Design', 'design'),
+('Business', 'business'),
+('Marketing', 'marketing'),
+('Data Science', 'data-science'),
+('Photography', 'photography')
+ON DUPLICATE KEY UPDATE name=VALUES(name);
+
 SELECT * FROM categories;
