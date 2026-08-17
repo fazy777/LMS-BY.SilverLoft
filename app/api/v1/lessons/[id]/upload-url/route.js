@@ -1,4 +1,4 @@
-import { AppError, handle, ok } from '@/lib/errors.js';
+import { AppError, handle, ok, getSearchParams } from '@/lib/errors.js';
 import { withAuth } from '@/lib/auth.js';
 import { getLessonOwned } from '@/services/course-content.service.js';
 import { createVideoUploadUrl } from '@/lib/media.js';
@@ -17,7 +17,7 @@ export const GET = handle(async (req, ctx) => {
     throw new AppError('ACCOUNT_SUSPENDED', 'Your account is not active.', 403);
   }
 
-  const rawProvider = (new URL(req.url).searchParams.get('provider') || '').trim().toLowerCase();
+  const rawProvider = (getSearchParams(req).get('provider') || '').trim().toLowerCase();
   if (rawProvider && !['cloudflare', 'cloudinary'].includes(rawProvider)) {
     throw new AppError('VALIDATION_ERROR', 'provider must be "cloudflare" or "cloudinary".', 400);
   }

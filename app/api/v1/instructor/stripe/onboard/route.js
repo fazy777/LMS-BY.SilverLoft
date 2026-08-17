@@ -1,4 +1,4 @@
-import { AppError, handle, ok } from '@/lib/errors.js';
+import { AppError, handle, ok, getBaseUrl } from '@/lib/errors.js';
 import { withAuth } from '@/lib/auth.js';
 import { startStripeOnboarding } from '@/services/instructor.service.js';
 
@@ -27,7 +27,7 @@ export const POST = handle(async (req) => {
     body = await req.json();
   } catch {}
 
-  const baseUrl = (process.env.APP_URL || new URL(req.url).origin).replace(/\/+$/, '');
+  const baseUrl = getBaseUrl(req);
   const result = await startStripeOnboarding(auth.id, {
     refreshUrl: body.refreshUrl || `${baseUrl}/instructor/stripe/refresh`,
     returnUrl: body.returnUrl || `${baseUrl}/instructor/stripe/return`,

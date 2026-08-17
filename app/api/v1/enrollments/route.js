@@ -1,4 +1,4 @@
-import { AppError, handle, ok, readJson } from '@/lib/errors.js';
+import { AppError, handle, ok, readJson, getSearchParams } from '@/lib/errors.js';
 import { withAuth } from '@/lib/auth.js';
 import {
   parseListEnrollmentsParams,
@@ -17,7 +17,7 @@ export const runtime = 'nodejs';
  */
 export const GET = handle(async (req) => {
   const auth = await withAuth(req);
-  const filters = parseListEnrollmentsParams(new URL(req.url).searchParams);
+  const filters = parseListEnrollmentsParams(getSearchParams(req));
   return listEnrollments(auth.id, filters);
 });
 

@@ -1,4 +1,4 @@
-import { AppError, handle, ok, readJson } from '@/lib/errors.js';
+import { AppError, handle, ok, readJson, getSearchParams } from '@/lib/errors.js';
 import { withAuth } from '@/lib/auth.js';
 import {
   parseCreateCourse,
@@ -13,7 +13,7 @@ export const runtime = 'nodejs';
  * GET /api/v1/courses — public course browse/search. No auth required.
  */
 export const GET = handle(async (req) => {
-  const filters = parseListCoursesParams(new URL(req.url).searchParams);
+  const filters = parseListCoursesParams(getSearchParams(req));
   return listCourses(filters);
 });
 

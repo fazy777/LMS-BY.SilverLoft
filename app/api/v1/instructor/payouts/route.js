@@ -1,4 +1,4 @@
-import { AppError, handle } from '@/lib/errors.js';
+import { AppError, handle, getSearchParams } from '@/lib/errors.js';
 import { withAuth } from '@/lib/auth.js';
 import { parseListPayoutsParams } from '@/lib/validation/instructor.js';
 import { listPayouts } from '@/services/instructor.service.js';
@@ -19,6 +19,6 @@ export const GET = handle(async (req) => {
     throw new AppError('NOT_INSTRUCTOR', 'Only instructors have payouts.', 403);
   }
 
-  const params = parseListPayoutsParams(new URL(req.url).searchParams);
+  const params = parseListPayoutsParams(getSearchParams(req));
   return listPayouts(auth.id, params);
 });

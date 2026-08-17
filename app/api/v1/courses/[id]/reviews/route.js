@@ -1,4 +1,4 @@
-import { handle } from '@/lib/errors.js';
+import { handle, getSearchParams } from '@/lib/errors.js';
 import { withOptionalAuth } from '@/lib/auth.js';
 import { parseListReviewsParams } from '@/lib/validation/review.js';
 import { listCourseReviews } from '@/services/review.service.js';
@@ -12,6 +12,6 @@ export const runtime = 'nodejs';
 export const GET = handle(async (req, ctx) => {
   const { id } = await ctx.params;
   const viewer = await withOptionalAuth(req);
-  const params = parseListReviewsParams(new URL(req.url).searchParams);
+  const params = parseListReviewsParams(getSearchParams(req));
   return listCourseReviews(id, viewer, params);
 });

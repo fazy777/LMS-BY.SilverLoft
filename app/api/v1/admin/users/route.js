@@ -1,4 +1,4 @@
-import { AppError, handle, ok, readJson } from '../../../../../lib/errors.js';
+import { AppError, handle, ok, readJson, getSearchParams } from '../../../../../lib/errors.js';
 import { requireAdmin, withAuth } from '../../../../../lib/auth.js';
 import {
   parseAdminUserUpdate,
@@ -9,20 +9,6 @@ import { listUsers, updateUserStatus } from '../../../../../services/admin.servi
 // mysql2 + firebase-admin require the Node.js runtime.
 export const runtime = 'nodejs';
 
-/**
- * /api/v1/admin/users — account management (admin only).
- */
-
-/**
- * GET — search/list accounts.
- * Query: q (email or display_name), status=active|suspended,
- * is_instructor=true|false, page, limit. Soft-deleted users excluded.
- *
- * 200 → { users: [user DTO], pagination }
- * 400 → VALIDATION_ERROR
- * 401 → not authenticated
- * 403 → ACCOUNT_SUSPENDED / ADMIN_ONLY
- */
 export const GET = handle(async (req) => {
   const auth = await withAuth(req);
   if (auth.status !== 'active') {
@@ -30,7 +16,7 @@ export const GET = handle(async (req) => {
   }
   requireAdmin(auth);
 
-  const params = parseListUsersParams(new URL(req.url).searchParams);
+  const params = parseListUsersParams(getSearchParams(req));
   return listUsers(params);
 });
 
