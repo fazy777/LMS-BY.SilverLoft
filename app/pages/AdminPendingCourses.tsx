@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { PlayIcon, CheckIcon } from '../components/Icons'
+import UniversalVideoPlayer from '../components/UniversalVideoPlayer'
 
 interface PendingCourse {
   id: number
@@ -304,11 +305,10 @@ export default function AdminPendingCourses({ onBack }: { onBack?: () => void })
 
               <div className="w-full bg-black rounded-2xl overflow-hidden aspect-video border border-[#CBD5E1] relative flex items-center justify-center">
                 {selectedLesson?.video_id ? (
-                  <video
-                    key={selectedLesson.video_id}
-                    src={selectedLesson.video_id}
-                    controls
-                    playsInline
+                  <UniversalVideoPlayer
+                    videoIdOrUrl={selectedLesson.video_id}
+                    title={selectedLesson.title}
+                    autoPlay={false}
                     className="w-full h-full object-contain"
                   />
                 ) : (

@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { PlayIcon, CheckIcon, ChevronIcon } from '../components/Icons'
+import UniversalVideoPlayer from '../components/UniversalVideoPlayer'
 
 interface Lesson {
   id: number
@@ -616,26 +617,55 @@ export default function InstructorCourseEditor({
                             <div className="space-y-4">
                               <div className="flex items-center justify-between">
                                 <h4 className="text-xs font-bold text-[#112A46] uppercase tracking-wider">
-                                  Video Attachment & Cloudinary Storage
+                                  Video Attachment (YouTube, Vimeo, Cloudinary, MP4)
                                 </h4>
                                 {hasVideo && (
-                                  <a
-                                    href={les.video_id || '#'}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="text-xs font-bold text-[#112A46] underline"
-                                  >
-                                    Test Direct Video Stream ↗
-                                  </a>
+                                  <span className="text-xs font-bold text-[#16A34A] bg-[#DCFCE7] px-2 py-0.5 rounded-full">
+                                    ✓ Video Linked
+                                  </span>
                                 )}
+                              </div>
+
+                              {/* Video Player Preview if attached */}
+                              {hasVideo && (
+                                <div className="rounded-xl overflow-hidden aspect-video bg-black max-w-lg border border-[#CBD5E1]">
+                                  <UniversalVideoPlayer
+                                    videoIdOrUrl={les.video_id}
+                                    title={les.title}
+                                    autoPlay={false}
+                                  />
+                                </div>
+                              )}
+
+                              {/* Direct Video / YouTube URL Input */}
+                              <div className="space-y-1.5">
+                                <label className="text-xs font-bold text-[#475569]">
+                                  Paste YouTube URL, Vimeo URL, or Direct MP4/Cloudinary Link:
+                                </label>
+                                <div className="flex gap-2">
+                                  <input
+                                    type="text"
+                                    placeholder="e.g. https://www.youtube.com/watch?v=... or https://youtu.be/... or .mp4 URL"
+                                    value={lessonVideoInputs[les.id] || ''}
+                                    onChange={e => setLessonVideoInputs({ ...lessonVideoInputs, [les.id]: e.target.value })}
+                                    className="input text-xs flex-1 h-10 bg-white"
+                                  />
+                                  <button
+                                    onClick={() => handleSaveVideoUrl(les.id)}
+                                    disabled={saving}
+                                    className="btn btn-primary btn-sm text-xs font-bold shrink-0 cursor-pointer"
+                                  >
+                                    Save Video Link
+                                  </button>
+                                </div>
                               </div>
 
                               {/* Cloudinary File Upload Box */}
                               <div className="p-4 bg-[#F0F5FB] border border-[#ACC8E5] rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                                 <div>
-                                  <div className="font-bold text-sm text-[#112A46]">☁️ Upload Video File to Cloudinary</div>
+                                  <div className="font-bold text-sm text-[#112A46]">☁️ Or Upload Video File to Cloudinary</div>
                                   <div className="text-xs text-[#64748B] mt-0.5">
-                                    Directly upload MP4, MOV, or WebM. Stored securely and linked in the SQL database.
+                                    Directly upload MP4, MOV, or WebM video file from your computer.
                                   </div>
                                 </div>
 
@@ -662,29 +692,6 @@ export default function InstructorCourseEditor({
                                   ⏳ {uploadProgress}
                                 </div>
                               )}
-
-                              {/* Direct Video URL Input */}
-                              <div className="space-y-1.5">
-                                <label className="text-xs font-bold text-[#475569]">
-                                  Or Paste Public / Cloudinary Video URL (Stored in SQL `lessons.video_id`):
-                                </label>
-                                <div className="flex gap-2">
-                                  <input
-                                    type="text"
-                                    placeholder="https://res.cloudinary.com/... or https://.../video.mp4"
-                                    value={lessonVideoInputs[les.id] || ''}
-                                    onChange={e => setLessonVideoInputs({ ...lessonVideoInputs, [les.id]: e.target.value })}
-                                    className="input text-xs flex-1 h-10 bg-white"
-                                  />
-                                  <button
-                                    onClick={() => handleSaveVideoUrl(les.id)}
-                                    disabled={saving}
-                                    className="btn btn-primary btn-sm text-xs font-bold shrink-0"
-                                  >
-                                    Save Video Link
-                                  </button>
-                                </div>
-                              </div>
 
                               {/* Sample Demo Videos for 1-Click Instant Testing */}
                               <div className="pt-2">

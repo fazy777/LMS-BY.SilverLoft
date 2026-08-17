@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { CheckIcon, PlayIcon, LockIcon, ChevronIcon } from '../components/Icons'
 import { CoursePlayerSkeleton } from '../components/CourseSkeleton'
+import UniversalVideoPlayer, { getYouTubeEmbedUrl } from '../components/UniversalVideoPlayer'
 
 interface Lesson {
   id: number
@@ -302,38 +303,43 @@ export default function CoursePlayer({
           {activeLesson?.content_type === 'video' ? (
             <div className="w-full bg-black flex flex-col items-center justify-center relative shrink-0 border-b border-white/10">
               <div className="w-full max-w-5xl aspect-video bg-black relative">
-                <video
-                  ref={videoRef}
-                  key={activeVideoUrl}
-                  src={activeVideoUrl}
-                  controls
-                  autoPlay
-                  playsInline
+                <UniversalVideoPlayer
+                  videoIdOrUrl={activeLesson.video_id}
+                  title={activeLesson.title}
+                  autoPlay={true}
+                  playbackSpeed={playbackSpeed}
                   onEnded={() => {
                     if (activeLesson) {
                       setCompletedLessonIds(prev => new Set(prev).add(activeLesson.id))
                     }
                   }}
                   className="w-full h-full object-contain"
+                  fallbackUrl={activeVideoUrl}
                 />
               </div>
 
-              {/* Speed Controls Bar */}
+              {/* Controls Bar */}
               <div className="w-full max-w-5xl py-2 px-3 sm:px-4 bg-[#071524] flex items-center justify-between text-[11px] sm:text-xs text-[#ACC8E5] flex-wrap gap-2">
                 <div className="flex items-center gap-1.5 sm:gap-2">
-                  <span className="font-semibold text-white/70">Speed:</span>
-                  {[0.75, 1, 1.25, 1.5, 2].map((spd) => (
-                    <button
-                      key={spd}
-                      onClick={() => handleSpeedChange(spd)}
-                      className={`px-1.5 py-0.5 rounded font-bold transition-colors ${playbackSpeed === spd ? 'bg-[#ACC8E5] text-[#112A46]' : 'text-[#ACC8E5] hover:bg-white/10'}`}
-                    >
-                      {spd}x
-                    </button>
-                  ))}
+                  {!getYouTubeEmbedUrl(activeLesson.video_id) && (
+                    <>
+                      <span className="font-semibold text-white/70">Speed:</span>
+                      {[0.75, 1, 1.25, 1.5, 2].map((spd) => (
+                        <button
+                          key={spd}
+                          onClick={() => handleSpeedChange(spd)}
+                          className={`px-1.5 py-0.5 rounded font-bold transition-colors ${playbackSpeed === spd ? 'bg-[#ACC8E5] text-[#112A46]' : 'text-[#ACC8E5] hover:bg-white/10'}`}
+                        >
+                          {spd}x
+                        </button>
+                      ))}
+                    </>
+                  )}
                 </div>
 
-                <span className="text-[10px] text-[#64748B]">Streaming HD</span>
+                <span className="text-[10px] text-[#64748B]">
+                  {getYouTubeEmbedUrl(activeLesson.video_id) ? 'YouTube Stream' : 'Streaming HD'}
+                </span>
               </div>
             </div>
           ) : (
