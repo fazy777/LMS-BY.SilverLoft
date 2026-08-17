@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { query } from '@/lib/db.js';
-import { adminAuth } from '@/lib/auth.js';
+import { adminAuth, getFirebaseLastError } from '@/lib/auth.js';
 import { getStripe } from '@/lib/stripe.js';
 
 export const dynamic = 'force-dynamic';
@@ -62,10 +62,14 @@ export async function GET() {
     // 2. Test Firebase Admin
     try {
       const auth = await adminAuth();
-      if (auth && (diagnostics.firebaseAdmin.hasClientEmail || diagnostics.firebaseAdmin.hasServiceAccount)) {
+      const lastError = getFirebaseLastError();
+      if (auth && (diagnostics.firebaseAdmin.hasClientEmail || diagnostics.firebaseAdmin.hasServiceAccount) && !lastError) {
         diagnostics.firebaseAdmin.status = 'configured';
       } else {
-        diagnostics.firebaseAdmin.status = 'missing_credentials';
+        diagnostics.firebaseAdmin.status = lastError ? 'error' : 'missing_credentials';
+        if (lastError) {
+          diagnostics.firebaseAdmin.error = { message: lastError };
+        }
       }
     } catch (err) {
       diagnostics.firebaseAdmin.status = 'error';
