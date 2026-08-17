@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { adminAuth, SESSION_COOKIE_NAME } from "@/lib/auth.js";
+import { verifySessionToken, SESSION_COOKIE_NAME } from "@/lib/auth.js";
 import { verifyUserOTP } from "@/lib/auth/verification-otp.js";
 import db from "@/lib/db.js";
 
@@ -23,14 +23,15 @@ export async function POST(request) {
             );
         }
 
-        const auth = adminAuth();
         let targetUid = null;
 
         // 1. Check ID Token if provided
         if (idToken) {
             try {
-                const decoded = await auth.verifyIdToken(idToken);
-                targetUid = decoded.uid;
+                const decoded = await verifySessionToken(idToken);
+                if (decoded) {
+                    targetUid = decoded.uid || decoded.sub;
+                }
             } catch (tokenErr) {
                 // Ignore and try other methods
             }
@@ -41,8 +42,10 @@ export async function POST(request) {
             const sessionCookie = request.cookies.get(SESSION_COOKIE_NAME)?.value;
             if (sessionCookie) {
                 try {
-                    const decoded = await auth.verifySessionCookie(sessionCookie, false);
-                    targetUid = decoded.uid;
+                    const decoded = await verifySessionToken(sessionCookie);
+                    if (decoded) {
+                        targetUid = decoded.uid || decoded.sub;
+                    }
                 } catch {
                     // Ignore
                 }

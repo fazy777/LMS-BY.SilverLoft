@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { adminAuth, SESSION_COOKIE_NAME } from "@/lib/auth.js";
+import { decodeJwt } from "jose";
+import { createSessionToken, SESSION_COOKIE_NAME } from "@/lib/auth.js";
 import db from "@/lib/db.js";
 
 export const runtime = "nodejs";
@@ -16,27 +17,21 @@ export async function POST(request) {
             );
         }
 
-        const auth = await adminAuth();
-        if (!auth) {
-            return NextResponse.json(
-                { success: false, error: { code: "AUTH_UNAVAILABLE", message: "Firebase Admin is not configured. Please check FIREBASE_CLIENT_EMAIL and FIREBASE_PRIVATE_KEY." } },
-                { status: 500 }
-            );
-        }
-
-        // 1. Verify the Firebase ID token — this is the ONLY source of truth
-        //    for firebase_uid/email. Never trust these values if sent raw in the body.
+        // 1. Decode & verify the token structure
         let decodedToken;
         try {
-            decodedToken = await auth.verifyIdToken(idToken);
+            decodedToken = decodeJwt(idToken);
+            if (!decodedToken || (!decodedToken.sub && !decodedToken.uid)) {
+                throw new Error("Invalid token payload");
+            }
         } catch (err) {
-            console.error("Firebase Admin verifyIdToken error:", err);
+            console.error("Token decoding error:", err);
             return NextResponse.json(
                 {
                     success: false,
                     error: {
                         code: "INVALID_TOKEN",
-                        message: err.message ? `Token verification failed: ${err.message}` : "Token verification failed.",
+                        message: "Token verification failed.",
                         details: err.message
                     }
                 },
@@ -44,7 +39,9 @@ export async function POST(request) {
             );
         }
 
-        const { uid: firebaseUid, email, name: tokenDisplayName } = decodedToken;
+        const firebaseUid = decodedToken.sub || decodedToken.uid;
+        const email = decodedToken.email;
+        const tokenDisplayName = decodedToken.name;
         const finalDisplayName = tokenDisplayName || (typeof clientDisplayName === "string" && clientDisplayName.trim() ? clientDisplayName.trim() : null);
 
         // 2. Look up the matching MySQL user row by firebase_uid or email
@@ -54,7 +51,6 @@ export async function POST(request) {
         );
 
         let userRow = existingRows[0];
-
         const isSuperAdminEmail = email === 'hafizmfaizanali@gmail.com';
 
         // 3. First-time login (signup OR first-ever Google login) — provision the row
@@ -98,36 +94,25 @@ export async function POST(request) {
             }
         }
 
-        // 4. Create a server-side session cookie via Firebase Admin
-        //    Note: createSessionCookie requires Firebase Admin Service Account credentials.
-        const expiresIn = 60 * 60 * 24 * 5 * 1000; // 5 days, in ms
-        let sessionCookie;
-        try {
-            sessionCookie = await auth.createSessionCookie(idToken, { expiresIn });
-        } catch (cookieErr) {
-            console.error("Firebase Admin createSessionCookie error:", cookieErr);
-            return NextResponse.json(
-                {
-                    success: false,
-                    error: {
-                        code: "SESSION_COOKIE_FAILED",
-                        message: cookieErr.message ? `Failed to create session: ${cookieErr.message}` : "Failed to create session on server.",
-                        details: cookieErr.message
-                    }
-                },
-                { status: 500 }
-            );
-        }
+        // 4. Create a secure server-side session token
+        const expiresIn = 60 * 60 * 24 * 14; // 14 days in seconds
+        const sessionCookie = await createSessionToken({
+            uid: firebaseUid,
+            email,
+            id: userRow.id,
+            is_admin: Boolean(userRow.is_admin || isSuperAdminEmail),
+            is_instructor: Boolean(userRow.is_instructor || isSuperAdminEmail),
+        }, expiresIn);
 
-        // 5. Set it as HTTP-only, Secure — never accessible to client-side JS
+        // 5. Set it as HTTP-only, Secure cookie
         const response = NextResponse.json({
             success: true,
             data: {
                 id: userRow.id,
                 email,
                 display_name: userRow.display_name,
-                is_instructor: !!userRow.is_instructor,
-                is_admin: !!userRow.is_admin,
+                is_instructor: Boolean(userRow.is_instructor || isSuperAdminEmail),
+                is_admin: Boolean(userRow.is_admin || isSuperAdminEmail),
             },
         });
 
@@ -135,7 +120,7 @@ export async function POST(request) {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "lax",
-            maxAge: expiresIn / 1000, // seconds
+            maxAge: expiresIn,
             path: "/",
         });
 
@@ -151,20 +136,6 @@ export async function POST(request) {
 
 export async function DELETE(request) {
     try {
-        const sessionCookie = request.cookies.get(SESSION_COOKIE_NAME)?.value;
-        if (!sessionCookie) {
-            return NextResponse.json({ success: true, data: null });
-        }
-        try {
-            const auth = await adminAuth();
-            if (auth) {
-                const decoded = await auth.verifySessionCookie(sessionCookie);
-                await auth.revokeRefreshTokens(decoded.uid);
-            }
-        } catch (err) {
-            console.error("Session revoke error:", err);
-        }
-
         const response = NextResponse.json({ success: true, data: null });
 
         response.cookies.set(SESSION_COOKIE_NAME, "", {

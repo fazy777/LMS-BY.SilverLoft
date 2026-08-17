@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
-import { adminAuth, SESSION_COOKIE_NAME } from "@/lib/auth.js";
+import { verifySessionToken, SESSION_COOKIE_NAME } from "@/lib/auth.js";
 import { createVerificationEmail } from "@/lib/auth/verification-email.js";
 import db from "@/lib/db.js";
 
@@ -11,7 +11,6 @@ export async function POST(request) {
         const body = await request.json().catch(() => ({}));
         const { idToken, email: bodyEmail, displayName: bodyDisplayName } = body;
 
-        const auth = adminAuth();
         let verifiedUid = null;
         let verifiedEmail = bodyEmail;
         let verifiedDisplayName = bodyDisplayName;
@@ -19,29 +18,26 @@ export async function POST(request) {
         // 1. Verify caller via ID Token or Session Cookie
         if (idToken) {
             try {
-                const decoded = await auth.verifyIdToken(idToken);
-                verifiedUid = decoded.uid;
-                verifiedEmail = decoded.email || verifiedEmail;
-                verifiedDisplayName = decoded.name || verifiedDisplayName;
+                const decoded = await verifySessionToken(idToken);
+                if (decoded) {
+                    verifiedUid = decoded.uid || decoded.sub;
+                    verifiedEmail = decoded.email || verifiedEmail;
+                    verifiedDisplayName = decoded.name || verifiedDisplayName;
+                }
             } catch (tokenErr) {
-                return NextResponse.json(
-                    {
-                        success: false,
-                        error: {
-                            code: "INVALID_TOKEN",
-                            message: "Invalid or expired Firebase ID token.",
-                        },
-                    },
-                    { status: 401 }
-                );
+                // fallback
             }
-        } else {
+        }
+        
+        if (!verifiedUid) {
             const sessionCookie = request.cookies.get(SESSION_COOKIE_NAME)?.value;
             if (sessionCookie) {
                 try {
-                    const decoded = await auth.verifySessionCookie(sessionCookie, false);
-                    verifiedUid = decoded.uid;
-                    verifiedEmail = decoded.email || verifiedEmail;
+                    const decoded = await verifySessionToken(sessionCookie);
+                    if (decoded) {
+                        verifiedUid = decoded.uid || decoded.sub;
+                        verifiedEmail = decoded.email || verifiedEmail;
+                    }
                 } catch {
                     // Session cookie invalid
                 }

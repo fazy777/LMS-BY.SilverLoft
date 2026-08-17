@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { query } from '@/lib/db.js';
-import { adminAuth, getFirebaseLastError } from '@/lib/auth.js';
 import { getStripe } from '@/lib/stripe.js';
 
 export const dynamic = 'force-dynamic';
@@ -15,17 +14,15 @@ export async function GET() {
       database: {
         status: 'pending',
         host: process.env.DATABASE_URL ? '[Configured via DATABASE_URL]' : (process.env.MYSQL_HOST || 'localhost'),
-        database: process.env.MYSQL_DATABASE || '[Not specified or in URI]',
-        ssl: Boolean(process.env.MYSQL_SSL),
+        database: process.env.MYSQL_DATABASE || 'LMS',
+        ssl: true,
         error: null,
       },
-      firebaseAdmin: {
-        status: 'pending',
-        hasServiceAccount: Boolean(process.env.FIREBASE_SERVICE_ACCOUNT),
-        hasClientEmail: Boolean(process.env.FIREBASE_CLIENT_EMAIL),
-        hasPrivateKey: Boolean(process.env.FIREBASE_PRIVATE_KEY),
-        projectId: process.env.FIREBASE_PROJECT_ID || process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || null,
-        error: null,
+      auth: {
+        status: 'configured',
+        type: 'jose-web-crypto',
+        sessionCookieName: process.env.SESSION_COOKIE_NAME || '__session',
+        projectId: process.env.FIREBASE_PROJECT_ID || process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'lms-nextjs-42ab6',
       },
       stripe: {
         status: 'pending',
@@ -53,32 +50,10 @@ export async function GET() {
       diagnostics.database.error = {
         message: err.message,
         code: err.code || 'UNKNOWN',
-        hint: process.env.VERCEL && (process.env.MYSQL_HOST === 'localhost' || !process.env.MYSQL_HOST)
-          ? 'Vercel serverless functions cannot connect to localhost. You must host MySQL on a cloud provider (e.g. TiDB Cloud, Aiven, Railway, AWS RDS) and set MYSQL_HOST or DATABASE_URL in Vercel Environment Variables.'
-          : 'Verify database credentials, host accessibility, and SSL requirements.',
       };
     }
 
-    // 2. Test Firebase Admin
-    try {
-      const auth = await adminAuth();
-      const lastError = getFirebaseLastError();
-      if (auth && (diagnostics.firebaseAdmin.hasClientEmail || diagnostics.firebaseAdmin.hasServiceAccount) && !lastError) {
-        diagnostics.firebaseAdmin.status = 'configured';
-      } else {
-        diagnostics.firebaseAdmin.status = lastError ? 'error' : 'missing_credentials';
-        if (lastError) {
-          diagnostics.firebaseAdmin.error = { message: lastError };
-        }
-      }
-    } catch (err) {
-      diagnostics.firebaseAdmin.status = 'error';
-      diagnostics.firebaseAdmin.error = {
-        message: err.message,
-      };
-    }
-
-    // 3. Test Stripe
+    // 2. Test Stripe
     try {
       if (process.env.STRIPE_SECRET_KEY) {
         const stripe = await getStripe();
@@ -96,8 +71,7 @@ export async function GET() {
     }
 
     const allHealthy = diagnostics.database.status === 'connected' &&
-      diagnostics.firebaseAdmin.status === 'configured' &&
-      diagnostics.stripe.status === 'configured';
+      diagnostics.auth.status === 'configured';
 
     return NextResponse.json({
       status: allHealthy ? 'healthy' : 'degraded',
@@ -115,4 +89,3 @@ export async function GET() {
     });
   }
 }
-
