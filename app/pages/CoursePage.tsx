@@ -143,10 +143,10 @@ export default function CoursePage({
     }
 
     Promise.allSettled([
-      fetch(`/api/v1/courses/${slug}`).then(r => r.json()),
-      fetch(`/api/v1/courses/${slug}/sections`).then(r => r.json()),
-      fetch(`/api/v1/courses/${slug}/reviews`).then(r => r.json()),
-      fetch('/api/v1/enrollments').then(r => r.json()),
+      fetch(`/api/v1/courses/${slug}`).then(r => (r.ok ? r.json().catch(() => null) : null)),
+      fetch(`/api/v1/courses/${slug}/sections`).then(r => (r.ok ? r.json().catch(() => null) : null)),
+      fetch(`/api/v1/courses/${slug}/reviews`).then(r => (r.ok ? r.json().catch(() => null) : null)),
+      fetch('/api/v1/enrollments').then(r => (r.ok ? r.json().catch(() => null) : null)),
     ]).then(([courseRes, sectionsRes, reviewsRes, enrollmentsRes]) => {
       // 1. Course Detail
       if (courseRes.status === 'fulfilled' && courseRes.value?.success && courseRes.value?.data) {

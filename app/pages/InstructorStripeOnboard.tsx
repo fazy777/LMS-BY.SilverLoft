@@ -28,18 +28,26 @@ export default function InstructorStripeOnboard({ onBack }: { onBack?: () => voi
     loadStatus()
   }, [])
 
-  const handleStartOnboarding = async () => {
+  const handleStartOnboarding = async (testVerify = false) => {
     setConnecting(true)
     setError(null)
     setFeedback(null)
     try {
-      const res = await fetch('/api/v1/instructor/stripe/onboard', { method: 'POST' })
+      const res = await fetch('/api/v1/instructor/stripe/onboard', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ test_verify: testVerify })
+      })
       const json = await res.json()
       if (json.success && json.data?.url) {
-        window.location.href = json.data.url
+        if (json.data?.onboarded) {
+          setFeedback('Stripe Express test onboarding completed! Payout capability enabled.')
+          loadStatus()
+        } else {
+          window.location.href = json.data.url
+        }
       } else {
-        setFeedback('Stripe Express test onboarding completed! Payout capability enabled.')
-        loadStatus()
+        setError(json?.error?.message || json?.message || 'Error connecting to Stripe. Ensure Stripe Connect is enabled in your Stripe Dashboard.')
       }
     } catch (e: any) {
       setError(e.message || 'Error connecting to Stripe.')
@@ -63,7 +71,7 @@ export default function InstructorStripeOnboard({ onBack }: { onBack?: () => voi
     <div className="max-w-xl mx-auto space-y-5">
       <button
         onClick={() => (onBack ? onBack() : router.push('/instructor'))}
-        className="btn btn-ghost btn-sm text-[#64748B] hover:text-[#112A46] font-bold pl-0 text-xs"
+        className="btn btn-ghost btn-sm text-[#64748B] hover:text-[#112A46] font-bold pl-0 text-xs cursor-pointer"
       >
         ← Back to Studio
       </button>
@@ -78,19 +86,19 @@ export default function InstructorStripeOnboard({ onBack }: { onBack?: () => voi
               Stripe Express Onboarding
             </h1>
             <p className="text-xs text-[#64748B] mt-0.5 font-medium">
-              Automated payouts and tax reporting via Stripe Connect
+              Automated payouts and creator revenue distribution
             </p>
           </div>
         </div>
 
         {feedback && (
           <div className="p-3.5 bg-[#DCFCE7] border border-[#86EFAC] text-[#16A34A] rounded-xl text-xs sm:text-sm font-bold mb-4 sm:mb-5">
-            {feedback}
+            ✓ {feedback}
           </div>
         )}
         {error && (
           <div className="p-3.5 bg-[#FEE2E2] border border-[#FCA5A5] text-[#DC2626] rounded-xl text-xs sm:text-sm font-bold mb-4 sm:mb-5">
-            {error}
+            ✕ {error}
           </div>
         )}
 
@@ -113,17 +121,29 @@ export default function InstructorStripeOnboard({ onBack }: { onBack?: () => voi
           </div>
         </div>
 
-        <button
-          onClick={handleStartOnboarding}
-          disabled={connecting}
-          className="btn btn-primary btn-block h-11 sm:h-12 font-bold shadow-md text-xs sm:text-sm"
-        >
-          {connecting
-            ? 'Redirecting to Stripe...'
-            : isOnboarded
-            ? 'Update Stripe Bank & Tax Details →'
-            : 'Connect Bank Account with Stripe Express →'}
-        </button>
+        <div className="flex flex-col gap-3">
+          <button
+            onClick={() => handleStartOnboarding(false)}
+            disabled={connecting}
+            className="btn btn-primary btn-block h-11 sm:h-12 font-bold shadow-md text-xs sm:text-sm cursor-pointer"
+          >
+            {connecting
+              ? 'Connecting to Stripe...'
+              : isOnboarded
+              ? 'Update Stripe Bank & Tax Details →'
+              : 'Connect Bank Account with Stripe Express →'}
+          </button>
+
+          {!isOnboarded && (
+            <button
+              onClick={() => handleStartOnboarding(true)}
+              disabled={connecting}
+              className="btn btn-ghost btn-block h-10 font-bold text-xs text-[#64748B] hover:text-[#112A46] border border-[#E2E8F0] cursor-pointer"
+            >
+              ⚡ Instant Sandbox Verification (Test Mode)
+            </button>
+          )}
+        </div>
       </div>
     </div>
   )
