@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Silver Loft — Learn without limits</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@600;800&display=swap');
+
+  :root{
+    --color-primary:#112A46;
+    --color-secondary:#ACC8E5;
+    --color-tint:#EAF1FA;
+    --color-ink:#0B1B2E;
+    --color-surface:#FFFFFF;
+    --color-muted:#64748B;
+    --color-border:#E2E8F0;
+    --color-success:#16A34A;
+    --color-warning:#D97706;
+    --color-danger:#DC2626;
+    --shadow-modal:0 30px 80px -20px rgba(17,42,70,0.35);
+    --shadow-card:0 4px 20px -2px rgba(17,42,70,0.05);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    color:var(--color-ink);
+    background:var(--color-tint);
+    -webkit-font-smoothing:antialiased;
+  }
+  img{max-width:100%;display:block;}
+  a{color:inherit;text-decoration:none;}
+  button{font-family:inherit;cursor:pointer;}
+  input,select{font-family:inherit;}
+  ::selection{background:var(--color-secondary);color:var(--color-ink);}
+
+  .h-display1{font-size:34px;line-height:1.15;font-weight:600;letter-spacing:-0.02em;}
+  .h-display2{font-size:26px;line-height:1.25;font-weight:600;letter-spacing:-0.015em;}
+  .h-section{font-size:20px;line-height:1.3;font-weight:600;}
+  .h-card{font-size:16px;line-height:1.4;font-weight:600;}
+  .t-body{font-size:14.5px;line-height:1.6;color:#334155;}
+  .t-helper{font-size:13px;line-height:1.5;color:var(--color-muted);}
+  .t-micro{font-size:11px;line-height:1;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;}
+  .t-otp{font-size:30px;font-weight:800;letter-spacing:8px;font-family:'JetBrains Mono',monospace;}
+
+  .wrap{max-width:1240px;margin:0 auto;padding:0 32px;}
+  @media (max-width:768px){.wrap{padding:0 18px;}}
+
+  /* ---------- buttons ---------- */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:48px;padding:0 22px;border-radius:12px;font-weight:600;font-size:14.5px;border:1px solid transparent;transition:transform .15s ease, background .15s ease, box-shadow .15s ease;white-space:nowrap;}
+  .btn:active{transform:translateY(1px) scale(0.98);}
+  .btn-primary{background:var(--color-primary);color:#fff;}
+  .btn-primary:hover{background:var(--color-ink);}
+  .btn-secondary{background:#fff;color:var(--color-primary);border-color:var(--color-border);}
+  .btn-secondary:hover{border-color:var(--color-primary);}
+  .btn-ghost{background:transparent;color:var(--color-primary);}
+  .btn-ghost:hover{background:var(--color-tint);}
+  .btn-danger-ghost{background:transparent;color:var(--color-danger);}
+  .btn-danger-ghost:hover{background:#FEF2F2;}
+  .btn-sm{height:36px;padding:0 14px;border-radius:10px;font-size:13.5px;}
+  .btn-block{width:100%;}
+  .btn[disabled]{opacity:.5;cursor:not-allowed;}
+
+  /* ---------- inputs ---------- */
+  .field{display:flex;flex-direction:column;gap:6px;}
+  .field label{font-size:13px;font-weight:600;color:var(--color-primary);}
+  .field .helper{font-size:12px;color:var(--color-muted);}
+  .field .err{font-size:12px;color:var(--color-danger);display:none;}
+  .field.invalid .err{display:block;}
+  .field.invalid input{border-color:var(--color-danger);}
+  .input, select.input{height:50px;border-radius:12px;border:1px solid var(--color-border);background:#fff;padding:0 16px;font-size:14.5px;color:var(--color-ink);width:100%;outline:none;transition:box-shadow .15s ease, border-color .15s ease;}
+  .input:focus, select.input:focus{border-color:var(--color-primary);box-shadow:0 0 0 4px rgba(172,200,229,.4);}
+  .input-icon-wrap{position:relative;}
+  .input-icon-wrap .input{padding-right:46px;}
+  .input-icon-btn{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--color-muted);display:flex;}
+  .checkbox-row{display:flex;align-items:center;gap:8px;font-size:13.5px;color:#334155;}
+  .checkbox-row input{width:16px;height:16px;accent-color:var(--color-primary);}
+
+  /* ---------- cards / surfaces ---------- */
+  .card{background:#fff;border:1px solid var(--color-border);border-radius:16px;box-shadow:var(--shadow-card);}
+  .modal-surface{border-radius:28px;box-shadow:var(--shadow-modal);}
+  .pill{border-radius:9999px;padding:4px 12px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;display:inline-flex;align-items:center;gap:6px;}
+  .pill-tint{background:var(--color-tint);color:var(--color-primary);}
+  .pill-success{background:#DCFCE7;color:var(--color-success);}
+  .pill-warning{background:#FEF3C7;color:var(--color-warning);}
+  .pill-danger{background:#FEE2E2;color:var(--color-danger);}
+  .pill-gray{background:#F1F5F9;color:var(--color-muted);}
+
+  .icon{width:18px;height:18px;flex-shrink:0;}
+  .icon-sm{width:14px;height:14px;}
+  .icon-lg{width:24px;height:24px;}
+
+  /* ---------- marketing header ---------- */
+  .site-header{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--color-border);}
+  .site-header .bar{display:flex;align-items:center;gap:28px;height:76px;}
+  .logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:18px;letter-spacing:-0.02em;color:var(--color-primary);flex-shrink:0;}
+  .logo .mark{width:30px;height:30px;border-radius:9px;background:linear-gradient(155deg,var(--color-primary),var(--color-ink));display:flex;align-items:center;justify-content:center;color:var(--color-secondary);}
+  .nav-links{display:flex;align-items:center;gap:4px;flex-shrink:0;}
+  .nav-links a{padding:9px 12px;border-radius:10px;font-size:14px;font-weight:500;color:#334155;}
+  .nav-links a:hover, .nav-links a.active{background:var(--color-tint);color:var(--color-primary);}
+  .header-search{flex:1;position:relative;max-width:420px;}
+  .header-search input{height:44px;padding-left:42px;border-radius:9999px;background:var(--color-tint);border:1px solid transparent;}
+  .header-search input:focus{background:#fff;border-color:var(--color-secondary);}
+  .header-search .icon{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--color-muted);}
+  .header-actions{display:flex;align-items:center;gap:10px;margin-left:auto;flex-shrink:0;}
+  .avatar{width:38px;height:38px;border-radius:50%;background:var(--color-primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;}
+
+  /* ---------- app shell (dashboard/instructor/admin) ---------- */
+  .app-shell{display:flex;min-height:100dvh;background:var(--color-tint);}
+  .app-sidebar{width:248px;background:var(--color-primary);color:#EAF1FA;flex-shrink:0;padding:22px 16px;display:flex;flex-direction:column;gap:22px;position:sticky;top:0;height:100dvh;}
+  .app-sidebar .logo{color:#fff;padding:0 8px;}
+  .app-sidebar .logo .mark{background:rgba(255,255,255,.12);}
+  .side-group{display:flex;flex-direction:column;gap:2px;}
+  .side-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#7C93AE;padding:8px 12px 4px;}
+  .side-link{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;font-size:14px;font-weight:500;color:#C9D9EA;}
+  .side-link:hover{background:rgba(255,255,255,.06);color:#fff;}
+  .side-link.active{background:rgba(255,255,255,.12);color:#fff;}
+  .side-link.active .icon{color:var(--color-secondary);}
+  .app-main{flex:1;min-width:0;}
+  .app-topbar{height:76px;display:flex;align-items:center;gap:16px;padding:0 32px;background:#fff;border-bottom:1px solid var(--color-border);position:sticky;top:0;z-index:10;}
+  .app-content{padding:32px;}
+  @media (max-width:900px){.app-sidebar{display:none;}.app-content{padding:20px;}.app-topbar{padding:0 20px;}}
+
+  /* ---------- grids ---------- */
+  .grid-courses{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;}
+  @media (max-width:1100px){.grid-courses{grid-template-columns:repeat(3,1fr);}}
+  @media (max-width:768px){.grid-courses{grid-template-columns:repeat(2,1fr);gap:14px;}}
+  @media (max-width:480px){.grid-courses{grid-template-columns:1fr;}}
+
+  .course-card{background:#fff;border-radius:16px;border:1px solid var(--color-border);overflow:hidden;box-shadow:var(--shadow-card);transition:transform .18s ease, box-shadow .18s ease;display:flex;flex-direction:column;}
+  .course-card:hover{transform:translateY(-3px);box-shadow:0 16px 34px -12px rgba(17,42,70,.18);}
+  .course-thumb{aspect-ratio:16/9;position:relative;display:flex;align-items:flex-end;padding:12px;}
+  .course-body{padding:16px;display:flex;flex-direction:column;gap:8px;flex:1;}
+  .course-title{font-size:15px;font-weight:600;line-height:1.35;color:var(--color-ink);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:41px;}
+  .course-instr{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--color-muted);}
+  .course-instr .mini-avatar{width:20px;height:20px;border-radius:50%;flex-shrink:0;}
+  .course-meta-row{display:flex;align-items:center;justify-content:space-between;margin-top:2px;}
+  .stars{display:flex;align-items:center;gap:4px;color:var(--color-warning);font-size:13px;font-weight:700;}
+  .stars .icon{color:var(--color-warning);}
+  .price{font-weight:800;font-size:16px;color:var(--color-primary);}
+
+  /* ---------- hero ---------- */
+  .hero{background:linear-gradient(180deg,var(--color-tint) 0%,#fff 100%);padding:64px 0 56px;border-bottom:1px solid var(--color-border);}
+  .hero-grid{display:grid;grid-template-columns:1.05fr 0.95fr;gap:56px;align-items:center;}
+  @media (max-width:900px){.hero-grid{grid-template-columns:1fr;}}
+  .category-pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;}
+  .category-pills button{border-radius:9999px;padding:8px 16px;font-size:13px;font-weight:600;border:1px solid var(--color-border);background:#fff;color:#334155;}
+  .category-pills button:hover, .category-pills button.active{border-color:var(--color-primary);background:var(--color-primary);color:#fff;}
+
+  .hero-visual{position:relative;height:390px;}
+  .float-card{position:absolute;background:#fff;border-radius:16px;box-shadow:var(--shadow-modal);padding:14px 16px;display:flex;align-items:center;gap:12px;}
+  .hero-mainpanel{position:absolute;inset:20px 60px 20px 0;border-radius:28px;background:linear-gradient(155deg,var(--color-primary),#1a3f66 55%, var(--color-ink));box-shadow:var(--shadow-modal);overflow:hidden;}
+  .hero-mainpanel::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle at 1px 1px, rgba(255,255,255,.14) 1px, transparent 0);background-size:26px 26px;}
+
+  /* ---------- catalog ---------- */
+  .catalog-layout{display:grid;grid-template-columns:264px 1fr;gap:32px;align-items:start;}
+  @media (max-width:860px){.catalog-layout{grid-template-columns:1fr;}}
+  .filter-block{padding-bottom:18px;margin-bottom:18px;border-bottom:1px solid var(--color-border);}
+  .filter-block:last-child{border-bottom:none;}
+  .filter-title{font-size:13px;font-weight:700;color:var(--color-primary);margin-bottom:10px;text-transform:uppercase;letter-spacing:.04em;}
+  .filter-check{display:flex;align-items:center;gap:9px;font-size:13.5px;color:#334155;padding:6px 0;}
+  .filter-check input{width:16px;height:16px;accent-color:var(--color-primary);}
+
+  /* ---------- sales page ---------- */
+  .sales-layout{display:grid;grid-template-columns:1fr 380px;gap:40px;align-items:start;}
+  @media (max-width:920px){.sales-layout{grid-template-columns:1fr;}.sticky-buy{position:static !important;}}
+  .sticky-buy{position:sticky;top:96px;}
+  .video-frame{aspect-ratio:16/9;border-radius:16px;background:linear-gradient(155deg,var(--color-primary),var(--color-ink));position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid var(--color-border);}
+  .play-btn{width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.5);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;color:#fff;}
+
+  .accordion-item{border:1px solid var(--color-border);border-radius:12px;margin-bottom:10px;overflow:hidden;}
+  .accordion-head{display:flex;align-items:center;justify-content:between;gap:12px;padding:14px 16px;background:#F8FAFC;cursor:pointer;}
+  .accordion-head .chev{margin-left:auto;transition:transform .2s ease;color:var(--color-muted);}
+  .accordion-item.open .chev{transform:rotate(180deg);}
+  .accordion-body{max-height:0;overflow:hidden;transition:max-height .25s ease;}
+  .accordion-item.open .accordion-body{max-height:600px;}
+  .lesson-row{display:flex;align-items:center;gap:10px;padding:11px 16px;font-size:13.5px;color:#334155;border-top:1px solid var(--color-border);}
+  .lesson-row .icon{color:var(--color-muted);}
+  .lesson-row .dur{margin-left:auto;color:var(--color-muted);font-size:12.5px;}
+
+  .rating-bar-row{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--color-muted);}
+  .rating-bar-track{flex:1;height:8px;border-radius:99px;background:#F1F5F9;overflow:hidden;}
+  .rating-bar-fill{height:100%;background:var(--color-warning);border-radius:99px;}
+
+  /* ---------- progress ---------- */
+  .progress-track{height:8px;border-radius:99px;background:#F1F5F9;overflow:hidden;}
+  .progress-fill{height:100%;background:var(--color-success);border-radius:99px;}
+
+  /* ---------- tables ---------- */
+  table.data-table{width:100%;border-collapse:collapse;}
+  .data-table th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--color-muted);font-weight:700;padding:0 16px 12px;border-bottom:1px solid var(--color-border);}
+  .data-table td{padding:14px 16px;border-bottom:1px solid var(--color-border);font-size:13.5px;vertical-align:middle;}
+  .data-table tr:last-child td{border-bottom:none;}
+  .table-thumb{width:56px;height:36px;border-radius:8px;flex-shrink:0;}
+
+  /* ---------- OTP ---------- */
+  .otp-row{display:flex;gap:10px;justify-content:center;}
+  .otp-box{width:52px;height:60px;border-radius:12px;border:1.5px solid var(--color-border);text-align:center;}
+  .otp-box:focus{outline:none;border-color:var(--color-primary);box-shadow:0 0 0 4px rgba(172,200,229,.4);}
+
+  /* ---------- strength meter ---------- */
+  .strength-row{display:flex;gap:5px;}
+  .strength-seg{height:5px;flex:1;border-radius:99px;background:#E2E8F0;}
+
+  /* ---------- misc ---------- */
+  .divider-label{display:flex;align-items:center;gap:12px;color:var(--color-muted);font-size:12.5px;}
+  .divider-label::before,.divider-label::after{content:'';flex:1;height:1px;background:var(--color-border);}
+  .kbadge{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+
+  .stat-card{background:#fff;border:1px solid var(--color-border);border-radius:16px;padding:20px 22px;box-shadow:var(--shadow-card);}
+  .stat-card .stat-num{font-size:26px;font-weight:700;letter-spacing:-0.01em;color:var(--color-primary);}
+  .toggle{width:40px;height:22px;border-radius:99px;background:#E2E8F0;position:relative;transition:background .15s;flex-shrink:0;}
+  .toggle.on{background:var(--color-success);}
+  .toggle .knob{position:absolute;top:2px;left:2px;width:18px;height:18px;background:#fff;border-radius:50%;transition:transform .15s;box-shadow:0 1px 3px rgba(0,0,0,.25);}
+  .toggle.on .knob{transform:translateX(18px);}
+
+  .fade-in{animation:fadeIn .3s ease both;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+  /* ---------- proto switcher ---------- */
+  #proto-switch{position:fixed;bottom:18px;left:18px;z-index:100;background:var(--color-ink);border-radius:16px;box-shadow:var(--shadow-modal);padding:8px;display:flex;gap:4px;max-width:calc(100vw - 36px);overflow-x:auto;}
+  #proto-switch button{white-space:nowrap;border:none;background:transparent;color:#93A9C2;font-size:12px;font-weight:600;padding:8px 12px;border-radius:10px;}
+  #proto-switch button.active{background:var(--color-primary);color:#fff;}
+  #proto-switch button:hover:not(.active){color:#fff;}
+
+  ::-webkit-scrollbar{height:8px;width:8px;}
+  ::-webkit-scrollbar-thumb{background:#C9D9EA;border-radius:8px;}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<div id="proto-switch"></div>
+
+<script>
+/* =========================================================================
+   ICONS — small inline SVG set
+========================================================================= */
+const ICONS = {
+  search:'<path d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z"/><path d="m21 21-4.3-4.3"/>',
+  star:'<path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2Z" fill="currentColor" stroke="none"/>',
+  starOutline:'<path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2Z"/>',
+  play:'<path d="m8 5 12 7-12 7V5Z" fill="currentColor" stroke="none"/>',
+  check:'<path d="M20 6 9 17l-5-5"/>',
+  checkCircle:'<path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z"/><path d="m8.5 12 2.5 2.5 5-5"/>',
+  chevDown:'<path d="m6 9 6 6 6-6"/>',
+  chevRight:'<path d="m9 18 6-6-6-6"/>',
+  clock:'<path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z"/><path d="M12 6v6l4 2"/>',
+  lock:'<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+  eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>',
+  eyeOff:'<path d="M3 3l18 18"/><path d="M10.6 5.1A9.9 9.9 0 0 1 12 5c6.5 0 10 7 10 7a17.9 17.9 0 0 1-3.2 4.1M6.5 6.6C4 8.3 2 12 2 12s3.5 7 10 7a10 10 0 0 0 4.2-.9"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>',
+  mail:'<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/>',
+  google:'<path d="M21.35 11.1h-9.17v2.92h5.24c-.23 1.4-1.6 4.1-5.24 4.1a5.98 5.98 0 0 1 0-11.96c1.7 0 2.85.72 3.5 1.34l2.4-2.3A9.6 9.6 0 0 0 12.18 3 9.5 9.5 0 1 0 12.18 22c5.48 0 9.1-3.85 9.1-9.27 0-.62-.07-1.1-.15-1.63Z" fill="currentColor" stroke="none"/>',
+  home:'<path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10"/>',
+  book:'<path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v16H6.5A2.5 2.5 0 0 0 4 20.5v-16Z"/><path d="M4 20.5A2.5 2.5 0 0 1 6.5 18H20"/>',
+  compass:'<circle cx="12" cy="12" r="10"/><path d="m16 8-2 6-6 2 2-6 6-2Z"/>',
+  award:'<circle cx="12" cy="8" r="6"/><path d="M8.5 13.5 7 22l5-3 5 3-1.5-8.5"/>',
+  settings:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/>',
+  bell:'<path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/>',
+  menu:'<path d="M4 6h16M4 12h16M4 18h16"/>',
+  upload:'<path d="M12 3v13"/><path d="m7 8 5-5 5 5"/><path d="M5 21h14"/>',
+  bank:'<path d="m3 10 9-6 9 6"/><path d="M5 10v9M10 10v9M14 10v9M19 10v9"/><path d="M3 21h18"/>',
+  users:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+  dollar:'<path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',
+  layers:'<path d="m12 2 9 5-9 5-9-5 9-5Z"/><path d="m3 12 9 5 9-5"/><path d="m3 17 9 5 9-5"/>',
+  arrowLeft:'<path d="M19 12H5"/><path d="m12 19-7-7 7-7"/>',
+  arrowRight:'<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>',
+  x:'<path d="M18 6 6 18"/><path d="M6 6l12 12"/>',
+  fileText:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6Z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h6"/>',
+  video:'<rect x="2" y="5" width="15" height="14" rx="2"/><path d="m22 8-5 4 5 4V8Z"/>',
+  shield:'<path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  gripVert:'<circle cx="9" cy="6" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="18" r="1"/><circle cx="15" cy="6" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="18" r="1"/>',
+  trend:'<path d="M22 7 13.5 15.5 8.5 10.5 2 17"/><path d="M16 7h6v6"/>',
+};
+function icon(name, cls='icon'){
+  return `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[name]||''}</svg>`;
+}
+function stars(rating, count){
+  let s='';
+  for(let i=1;i<=5;i++){ s += icon(i<=Math.round(rating)?'star':'starOutline','icon-sm'); }
+  return `<span class="stars">${rating.toFixed(1)} ${s} ${count?`<span style="color:var(--color-muted);font-weight:500;">(${count.toLocaleString()})</span>`:''}</span>`;
+}
+function thumbGradient(seed){
+  const grads = [
+    'linear-gradient(135deg,#112A46,#3B6396)','linear-gradient(135deg,#0B1B2E,#5C87AC)',
+    'linear-gradient(135deg,#1B3A5C,#ACC8E5)','linear-gradient(135deg,#112A46,#16A34A 180%)',
+    'linear-gradient(135deg,#2A4A70,#0B1B2E)','linear-gradient(135deg,#112A46,#D97706 200%)'
+  ];
+  return grads[seed % grads.length];
+}
+
+/* =========================================================================
+   MOCK DATA
+========================================================================= */
+const CATEGORIES = ['Development','Design','Business','Marketing','Data Science','Photography'];
+
+const COURSES = [
+  {id:1, title:'The Complete Next.js 16 Developer Course', cat:'Development', instr:'Marta Coelho', rating:4.8, reviews:12480, price:64.99, lessons:142, hours:38, level:'All Levels'},
+  {id:2, title:'UI/UX Design Foundations: From Wireframe to Prototype', cat:'Design', instr:'Owen Faraday', rating:4.7, reviews:8341, price:49.99, lessons:96, hours:22, level:'Beginner'},
+  {id:3, title:'Financial Modeling & Valuation for Startups', cat:'Business', instr:'Priya Nandakumar', rating:4.6, reviews:5210, price:74.99, lessons:74, hours:19, level:'Intermediate'},
+  {id:4, title:'Growth Marketing: Funnels, SEO & Paid Acquisition', cat:'Marketing', instr:'Diego Santoro', rating:4.5, reviews:3987, price:54.99, lessons:88, hours:16, level:'All Levels'},
+  {id:5, title:'Python for Data Science and Machine Learning', cat:'Data Science', instr:'Hana Ishikawa', rating:4.9, reviews:21032, price:69.99, lessons:210, hours:47, level:'Beginner'},
+  {id:6, title:'Portrait Photography: Studio Lighting Masterclass', cat:'Photography', instr:'Lucas Reyes', rating:4.7, reviews:2765, price:39.99, lessons:52, hours:11, level:'Intermediate'},
+  {id:7, title:'Advanced TypeScript: Architecture & Design Patterns', cat:'Development', instr:'Marta Coelho', rating:4.8, reviews:6120, price:59.99, lessons:118, hours:24, level:'Advanced'},
+  {id:8, title:'Brand Identity Design with Figma', cat:'Design', instr:'Owen Faraday', rating:4.6, reviews:4108, price:44.99, lessons:63, hours:13, level:'Beginner'},
+];
+
+function courseCard(c, extra=''){
+  return `
+  <a href="#" class="course-card" onclick="go('course-detail', event, ${c.id})">
+    <div class="course-thumb" style="background:${thumbGradient(c.id)}">
+      <span class="pill" style="background:rgba(255,255,255,.16);color:#fff;backdrop-filter:blur(4px);">${c.cat}</span>
+    </div>
+    <div class="course-body">
+      <div class="course-title">${c.title}</div>
+      <div class="course-instr">
+        <span class="mini-avatar" style="background:${thumbGradient(c.id+3)}"></span> ${c.instr}
+      </div>
+      <div class="course-meta-row">
+        ${stars(c.rating, c.reviews)}
+      </div>
+      <div class="course-meta-row" style="margin-top:2px;">
+        <span class="t-helper" style="display:flex;align-items:center;gap:4px;">${icon('clock','icon-sm')} ${c.hours}h &middot; ${c.lessons} lessons</span>
+        <span class="price">$${c.price}</span>
+      </div>
+      ${extra}
+    </div>
+  </a>`;
+}
+
+/* =========================================================================
+   ROUTER
+========================================================================= */
+const PAGES = [
+  {id:'landing', label:'Marketplace'},
+  {id:'catalog', label:'Catalog'},
+  {id:'course-detail', label:'Course Page'},
+  {id:'login', label:'Login'},
+  {id:'signup', label:'Sign Up'},
+  {id:'verify', label:'Verify Email'},
+  {id:'dashboard', label:'Student Dashboard'},
+  {id:'player', label:'Course Player'},
+  {id:'instructor-dashboard', label:'Instructor Studio'},
+  {id:'instructor-courses', label:'Instructor Courses'},
+  {id:'admin-pending', label:'Admin Review'},
+];
+let state = { page:'landing', activeCourseId:1, activeSection:0 };
+
+function go(page, ev, courseId){
+  if(ev) ev.preventDefault();
+  state.page = page;
+  if(courseId) state.activeCourseId = courseId;
+  window.scrollTo({top:0,behavior:'instant'});
+  render();
+}
+window.go = go;
+
+function renderProtoSwitch(){
+  const el = document.getElementById('proto-switch');
+  el.innerHTML = PAGES.map(p => `<button class="${state.page===p.id?'active':''}" onclick="go('${p.id}')">${p.label}</button>`).join('');
+}
+
+/* =========================================================================
+   SHARED CHROME
+========================================================================= */
+function marketingHeader(active){
+  return `
+  <header class="site-header">
+    <div class="wrap bar">
+      <a href="#" class="logo" onclick="go('landing',event)"><span class="mark">${icon('layers','icon-sm')}</span> Silver Loft</a>
+      <nav class="nav-links">
+        <a href="#" class="${active==='catalog'?'active':''}" onclick="go('catalog',event)">Courses</a>
+        <a href="#" onclick="go('instructor-dashboard',event)">Teach on Silver Loft</a>
+      </nav>
+      <div class="header-search">
+        ${icon('search')}
+        <input class="input" placeholder="Search for anything">
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-ghost btn-sm" onclick="go('login',event)">Log in</button>
+        <button class="btn btn-primary btn-sm" onclick="go('signup',event)">Sign up</button>
+      </div>
+    </div>
+  </header>`;
+}
+
+function appSidebar(role, active){
+  const studentLinks = [
+    {id:'dashboard', label:'Dashboard', icon:'home'},
+    {id:'player', label:'My Learning', icon:'book'},
+    {id:'catalog', label:'Browse Courses', icon:'compass'},
+    {id:'_certs', label:'Certificates', icon:'award'},
+    {id:'_settings', label:'Settings', icon:'settings'},
+  ];
+  const instructorLinks = [
+    {id:'instructor-dashboard', label:'Overview', icon:'home'},
+    {id:'instructor-courses', label:'My Courses', icon:'book'},
+    {id:'_builder', label:'Course Builder', icon:'plus'},
+    {id:'_earnings', label:'Earnings', icon:'dollar'},
+    {id:'_stripe', label:'Payout Setup', icon:'bank'},
+  ];
+  const adminLinks = [
+    {id:'_akpi', label:'Dashboard', icon:'home'},
+    {id:'admin-pending', label:'Review Queue', icon:'shield'},
+    {id:'_ausers', label:'Users', icon:'users'},
+    {id:'_aanalytics', label:'Analytics', icon:'trend'},
+  ];
+  const links = role==='instructor'?instructorLinks:role==='admin'?adminLinks:studentLinks;
+  return `
+  <aside class="app-sidebar">
+    <a href="#" class="logo" onclick="go('landing',event)"><span class="mark">${icon('layers','icon-sm')}</span> Silver Loft</a>
+    <div class="side-group">
+      <div class="side-label">${role==='instructor'?'Instructor Studio':role==='admin'?'Admin Portal':'Learning'}</div>
+      ${links.map(l=>`<a href="#" class="side-link ${active===l.id?'active':''}" onclick="go('${l.id.startsWith('_')?active:l.id}',event)">${icon(l.icon,'icon icon-sm')} ${l.label}</a>`).join('')}
+    </div>
+    <div style="margin-top:auto;">
+      <div class="side-group">
+        <a href="#" class="side-link" onclick="go('landing',event)">${icon('arrowLeft','icon icon-sm')} Back to marketplace</a>
+      </div>
+    </div>
+  </aside>`;
+}
+
+function appTopbar(name, roleTag){
+  return `
+  <div class="app-topbar">
+    <button class="btn btn-ghost btn-sm" style="display:none;" id="mobileMenuBtn">${icon('menu')}</button>
+    <div class="h-section" style="margin-right:auto;">${name}</div>
+    <button class="btn btn-ghost btn-sm">${icon('bell')}</button>
+    <div style="display:flex;align-items:center;gap:10px;padding-left:12px;border-left:1px solid var(--color-border);">
+      <div class="avatar">JC</div>
+      <div>
+        <div style="font-size:13.5px;font-weight:600;">Jordan Cole</div>
+        <div class="t-helper" style="font-size:11.5px;">${roleTag}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* =========================================================================
+   PAGE: LANDING
+========================================================================= */
+function pageLanding(){
+  return `
+  ${marketingHeader('landing')}
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="pill pill-tint">${icon('shield','icon-sm')} Admin-reviewed, quality-gated courses</span>
+        <h1 class="h-display1" style="margin:16px 0 14px;max-width:520px;">Skills that move your career forward — taught by people who use them daily.</h1>
+        <p class="t-body" style="max-width:480px;">Over 40,000 self-paced courses across development, design, business and more. Learn at your pace, keep what you finish.</p>
+        <div class="input-icon-wrap" style="max-width:460px;margin-top:24px;">
+          ${icon('search')}
+          <input class="input" style="height:56px;border-radius:9999px;padding-left:44px;box-shadow:var(--shadow-card);" placeholder="What do you want to learn today?">
+        </div>
+        <div class="category-pills">
+          ${CATEGORIES.map((c,i)=>`<button class="${i===0?'active':''}">${c}</button>`).join('')}
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-mainpanel"></div>
+        <div class="float-card" style="top:14px;right:0px;width:230px;">
+          <div class="kbadge" style="background:#DCFCE7;color:var(--color-success);">${icon('checkCircle')}</div>
+          <div><div style="font-weight:700;font-size:13.5px;">Lesson complete</div><div class="t-helper">Streak: 12 days</div></div>
+        </div>
+        <div class="float-card" style="bottom:36px;right:36px;width:210px;">
+          <div class="kbadge" style="background:var(--color-tint);color:var(--color-primary);">${icon('award')}</div>
+          <div><div style="font-weight:700;font-size:13.5px;">Certificate earned</div><div class="t-helper">UI/UX Foundations</div></div>
+        </div>
+        <div class="float-card" style="top:130px;right:180px;width:180px;">
+          ${stars(4.9)}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap" style="padding:56px 32px;">
+    <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:22px;">
+      <h2 class="h-display2">Featured courses</h2>
+      <a href="#" class="btn btn-ghost btn-sm" onclick="go('catalog',event)">Browse all ${icon('arrowRight','icon-sm')}</a>
+    </div>
+    <div class="grid-courses">${COURSES.slice(0,8).map(c=>courseCard(c)).join('')}</div>
+  </section>
+
+  <section class="wrap" style="padding-bottom:64px;">
+    <div class="card modal-surface" style="background:linear-gradient(135deg,var(--color-primary),var(--color-ink));padding:48px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;">
+      <div style="max-width:520px;">
+        <span class="pill" style="background:rgba(255,255,255,.14);color:#fff;">Teach on Silver Loft</span>
+        <h2 class="h-display2" style="color:#fff;margin:14px 0 8px;">Turn your expertise into income — no approval needed to start.</h2>
+        <p class="t-body" style="color:#C9D9EA;">Build your course, and our team reviews it before it goes live. You keep control of pricing and content.</p>
+      </div>
+      <button class="btn btn-primary" style="background:#fff;color:var(--color-primary);" onclick="go('instructor-dashboard',event)">Become an Instructor</button>
+    </div>
+  </section>`;
+}
+
+/* =========================================================================
+   PAGE: CATALOG
+========================================================================= */
+function pageCatalog(){
+  return `
+  ${marketingHeader('catalog')}
+  <div class="wrap" style="padding:32px;">
+    <h1 class="h-display2" style="margin-bottom:4px;">Development courses</h1>
+    <p class="t-helper" style="margin-bottom:24px;">${COURSES.length} results</p>
+    <div class="catalog-layout">
+      <aside>
+        <div class="card" style="padding:20px;">
+          <div class="filter-block">
+            <div class="filter-title">Category</div>
+            ${CATEGORIES.map((c,i)=>`<label class="filter-check"><input type="checkbox" ${i<2?'checked':''}> ${c}</label>`).join('')}
+          </div>
+          <div class="filter-block">
+            <div class="filter-title">Price</div>
+            <label class="filter-check"><input type="radio" name="price"> Under $25</label>
+            <label class="filter-check"><input type="radio" name="price" checked> $25 &ndash; $75</label>
+            <label class="filter-check"><input type="radio" name="price"> $75+</label>
+          </div>
+          <div class="filter-block">
+            <div class="filter-title">Rating</div>
+            <label class="filter-check"><input type="radio" name="rating" checked> ${stars(4.5)} & up</label>
+            <label class="filter-check"><input type="radio" name="rating"> ${stars(4.0)} & up</label>
+          </div>
+          <div class="filter-block">
+            <div class="filter-title">Level</div>
+            <label class="filter-check"><input type="checkbox"> Beginner</label>
+            <label class="filter-check"><input type="checkbox"> Intermediate</label>
+            <label class="filter-check"><input type="checkbox"> Advanced</label>
+          </div>
+        </div>
+      </aside>
+      <div>
+        <div style="display:flex;justify-content:flex-end;margin-bottom:18px;">
+          <select class="input" style="width:220px;height:42px;">
+            <option>Most Popular</option><option>Newest</option><option>Highest Rated</option>
+          </select>
+        </div>
+        <div class="grid-courses" style="grid-template-columns:repeat(3,1fr);">${COURSES.map(c=>courseCard(c)).join('')}</div>
+        <div style="display:flex;justify-content:center;gap:8px;margin-top:32px;">
+          ${[1,2,3,4].map(n=>`<button class="btn btn-sm ${n===1?'btn-primary':'btn-secondary'}" style="width:38px;padding:0;">${n}</button>`).join('')}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* =========================================================================
+   PAGE: COURSE DETAIL / SALES PAGE
+========================================================================= */
+function curriculumData(){
+  return [
+    {title:'Getting Started', lessons:[
+      {name:'Welcome & course roadmap', dur:'4:12', preview:true, type:'video'},
+      {name:'Setting up your dev environment', dur:'9:45', preview:true, type:'video'},
+      {name:'Course resources', dur:'2 min read', preview:false, type:'text'},
+    ]},
+    {title:'Core Fundamentals', lessons:[
+      {name:'App Router deep dive', dur:'22:10', preview:false, type:'video'},
+      {name:'Server vs client components', dur:'18:03', preview:false, type:'video'},
+      {name:'Data fetching patterns', dur:'26:40', preview:false, type:'video'},
+      {name:'Quiz: Fundamentals checkpoint', dur:'10 min', preview:false, type:'text'},
+    ]},
+    {title:'Building a Real Project', lessons:[
+      {name:'Project architecture', dur:'14:22', preview:false, type:'video'},
+      {name:'Authentication flow', dur:'31:15', preview:false, type:'video'},
+      {name:'Deploying to production', dur:'12:08', preview:false, type:'video'},
+    ]},
+  ];
+}
+
+function pageCourseDetail(){
+  const c = COURSES.find(x=>x.id===state.activeCourseId) || COURSES[0];
+  const sections = curriculumData();
+  return `
+  ${marketingHeader('catalog')}
+  <div class="wrap" style="padding:32px;">
+    <div class="sales-layout">
+      <div>
+        <span class="pill pill-tint">${c.cat}</span>
+        <h1 class="h-display1" style="margin:14px 0 10px;">${c.title}</h1>
+        <p class="t-body" style="max-width:640px;">A complete, project-based path covering the fundamentals through advanced patterns &mdash; built for developers who learn by shipping real things.</p>
+        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:14px 0 20px;">
+          ${stars(c.rating, c.reviews)}
+          <span class="t-helper">${c.hours} total hours &middot; ${c.lessons} lessons &middot; ${c.level}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="mini-avatar" style="width:38px;height:38px;background:${thumbGradient(c.id+3)}"></span>
+          <div>
+            <div style="font-size:13.5px;font-weight:600;">Created by ${c.instr}</div>
+            <div class="t-helper">Last updated August 2026 &middot; English</div>
+          </div>
+        </div>
+
+        <h2 class="h-section" style="margin:36px 0 14px;">Course content</h2>
+        <div id="curriculum">
+          ${sections.map((sec, si)=>`
+          <div class="accordion-item ${si===0?'open':''}" data-idx="${si}">
+            <div class="accordion-head" onclick="toggleAccordion(${si})">
+              <div>
+                <div style="font-weight:600;font-size:14.5px;">${sec.title}</div>
+                <div class="t-helper">${sec.lessons.length} lessons</div>
+              </div>
+              ${icon('chevDown','icon chev')}
+            </div>
+            <div class="accordion-body">
+              ${sec.lessons.map(l=>`
+              <div class="lesson-row">
+                ${icon(l.type==='video'?'video':'fileText','icon-sm')}
+                <span>${l.name}</span>
+                ${l.preview?`<span class="pill pill-tint" style="margin-left:8px;">Preview</span>`:''}
+                <span class="dur">${l.dur}</span>
+              </div>`).join('')}
+            </div>
+          </div>`).join('')}
+        </div>
+
+        <h2 class="h-section" style="margin:36px 0 14px;">Student reviews</h2>
+        <div class="card" style="padding:24px;display:flex;gap:32px;flex-wrap:wrap;">
+          <div style="text-align:center;min-width:120px;">
+            <div style="font-size:44px;font-weight:800;color:var(--color-primary);">${c.rating}</div>
+            ${stars(c.rating).replace(c.rating.toFixed(1),'')}
+            <div class="t-helper" style="margin-top:4px;">${c.reviews.toLocaleString()} reviews</div>
+          </div>
+          <div style="flex:1;min-width:220px;display:flex;flex-direction:column;gap:8px;justify-content:center;">
+            ${[5,4,3,2,1].map(n=>`
+            <div class="rating-bar-row">
+              <span style="width:36px;">${n} star</span>
+              <div class="rating-bar-track"><div class="rating-bar-fill" style="width:${n===5?68:n===4?22:n===3?7:n===2?2:1}%;"></div></div>
+              <span style="width:32px;text-align:right;">${n===5?68:n===4?22:n===3?7:n===2?2:1}%</span>
+            </div>`).join('')}
+          </div>
+        </div>
+      </div>
+
+      <div class="sticky-buy">
+        <div class="card modal-surface" style="overflow:hidden;">
+          <div class="video-frame" style="border-radius:0;border:none;">
+            <div class="play-btn">${icon('play')}</div>
+          </div>
+          <div style="padding:22px;">
+            <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:16px;">
+              <span style="font-size:30px;font-weight:800;color:var(--color-primary);">$${c.price}</span>
+            </div>
+            <button class="btn btn-primary btn-block" onclick="go('login',event)">Enroll Now</button>
+            <button class="btn btn-secondary btn-block" style="margin-top:10px;">Add to Wishlist</button>
+            <p class="t-helper" style="text-align:center;margin-top:14px;">30-Day Money-Back Guarantee</p>
+            <div style="border-top:1px solid var(--color-border);margin-top:18px;padding-top:16px;display:flex;flex-direction:column;gap:10px;">
+              <div style="display:flex;gap:10px;align-items:center;font-size:13.5px;">${icon('clock','icon-sm')} ${c.hours} hours on-demand video</div>
+              <div style="display:flex;gap:10px;align-items:center;font-size:13.5px;">${icon('fileText','icon-sm')} Full lifetime access</div>
+              <div style="display:flex;gap:10px;align-items:center;font-size:13.5px;">${icon('award','icon-sm')} Certificate of completion</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+function toggleAccordion(i){
+  const el = document.querySelector(`#curriculum [data-idx="${i}"]`);
+  el.classList.toggle('open');
+}
+window.toggleAccordion = toggleAccordion;
+
+/* =========================================================================
+   PAGE: LOGIN
+========================================================================= */
+function authShell(inner){
+  return `
+  <div style="min-height:100dvh;display:grid;grid-template-columns:1fr 1fr;">
+    <div style="background:linear-gradient(160deg,var(--color-primary),var(--color-ink));position:relative;overflow:hidden;padding:48px;display:flex;flex-direction:column;justify-content:space-between;">
+      <div style="position:absolute;inset:0;background-image:radial-gradient(circle at 1px 1px, rgba(255,255,255,.12) 1px, transparent 0);background-size:28px 28px;"></div>
+      <a href="#" class="logo" style="color:#fff;position:relative;" onclick="go('landing',event)"><span class="mark" style="background:rgba(255,255,255,.14);">${icon('layers','icon-sm')}</span> Silver Loft</a>
+      <div style="position:relative;color:#fff;max-width:420px;">
+        <h2 class="h-display1" style="color:#fff;">Learning that compounds &mdash; one lesson at a time.</h2>
+        <p class="t-body" style="color:#AEC4DB;margin-top:10px;">Join over 2 million students building real skills from instructors who work in the field.</p>
+      </div>
+      <div style="position:relative;display:flex;gap:22px;color:#AEC4DB;font-size:12.5px;">
+        <span style="display:flex;align-items:center;gap:6px;">${icon('lock','icon-sm')} 256-bit encryption</span>
+        <span style="display:flex;align-items:center;gap:6px;">${icon('shield','icon-sm')} SOC 2 compliant</span>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:center;padding:32px;">
+      <div style="width:100%;max-width:380px;">${inner}</div>
+    </div>
+  </div>
+  @media (max-width:800px){ /* handled via class below */ }
+  `;
+}
+
+function pageLogin(){
+  return `
+  <div class="auth-grid" style="min-height:100dvh;display:grid;grid-template-columns:1fr 1fr;">
+    <div style="background:linear-gradient(160deg,var(--color-primary),var(--color-ink));position:relative;overflow:hidden;padding:48px;display:flex;flex-direction:column;justify-content:space-between;" class="auth-left">
+      <div style="position:absolute;inset:0;background-image:radial-gradient(circle at 1px 1px, rgba(255,255,255,.12) 1px, transparent 0);background-size:28px 28px;"></div>
+      <a href="#" class="logo" style="color:#fff;position:relative;" onclick="go('landing',event)"><span class="mark" style="background:rgba(255,255,255,.14);">${icon('layers','icon-sm')}</span> Silver Loft</a>
+      <div style="position:relative;color:#fff;max-width:420px;">
+        <h2 class="h-display1" style="color:#fff;">Learning that compounds &mdash; one lesson at a time.</h2>
+        <p class="t-body" style="color:#AEC4DB;margin-top:10px;">Join over 2 million students building real skills from instructors who work in the field.</p>
+      </div>
+      <div style="position:relative;display:flex;gap:22px;color:#AEC4DB;font-size:12.5px;">
+        <span style="display:flex;align-items:center;gap:6px;">${icon('lock','icon-sm')} 256-bit encryption</span>
+        <span style="display:flex;align-items:center;gap:6px;">${icon('shield','icon-sm')} SOC 2 compliant</span>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:center;padding:32px;">
+      <div style="width:100%;max-width:380px;">
+        <h1 class="h-display2">Welcome back</h1>
+        <p class="t-helper" style="margin-top:4px;">Log in to keep your learning streak going.</p>
+        <div style="display:flex;flex-direction:column;gap:16px;margin-top:26px;">
+          <div class="field">
+            <label>Email</label>
+            <input class="input" type="email" placeholder="you@example.com">
+          </div>
+          <div class="field">
+            <label>Password</label>
+            <div class="input-icon-wrap">
+              <input class="input" type="password" placeholder="••••••••">
+              <button class="input-icon-btn">${icon('eye','icon-sm')}</button>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <label class="checkbox-row"><input type="checkbox" checked> Keep me signed in</label>
+            <a href="#" class="t-helper" style="color:var(--color-primary);font-weight:600;" onclick="go('forgot',event)">Forgot?</a>
+          </div>
+          <button class="btn btn-primary btn-block" onclick="go('dashboard',event)">Log In</button>
+          <div class="divider-label">or continue with</div>
+          <button class="btn btn-secondary btn-block">${icon('google','icon-sm')} Continue with Google</button>
+        </div>
+        <p class="t-helper" style="text-align:center;margin-top:22px;">Don't have an account? <a href="#" style="color:var(--color-primary);font-weight:600;" onclick="go('signup',event)">Sign up</a></p>
+      </div>
+    </div>
+  </div>
+  <style>@media (max-width:800px){.auth-left{display:none;}.auth-grid{grid-template-columns:1fr;}}</style>`;
+}
+
+/* =========================================================================
+   PAGE: SIGNUP (with live strength meter)
+========================================================================= */
+function pageSignup(){
+  return `
+  <div class="auth-grid" style="min-height:100dvh;display:grid;grid-template-columns:1fr 1fr;">
+    <div style="background:linear-gradient(160deg,var(--color-primary),var(--color-ink));position:relative;overflow:hidden;padding:48px;display:flex;flex-direction:column;justify-content:space-between;" class="auth-left">
+      <div style="position:absolute;inset:0;background-image:radial-gradient(circle at 1px 1px, rgba(255,255,255,.12) 1px, transparent 0);background-size:28px 28px;"></div>
+      <a href="#" class="logo" style="color:#fff;position:relative;" onclick="go('landing',event)"><span class="mark" style="background:rgba(255,255,255,.14);">${icon('layers','icon-sm')}</span> Silver Loft</a>
+      <div style="position:relative;color:#fff;max-width:420px;">
+        <h2 class="h-display1" style="color:#fff;">Start learning today.</h2>
+        <p class="t-body" style="color:#AEC4DB;margin-top:10px;">Free to join. Pay only for the courses you take.</p>
+      </div>
+      <div></div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:center;padding:32px;">
+      <div style="width:100%;max-width:380px;">
+        <h1 class="h-display2">Create your account</h1>
+        <p class="t-helper" style="margin-top:4px;">Takes less than a minute.</p>
+        <div style="display:flex;flex-direction:column;gap:16px;margin-top:26px;">
+          <div class="field">
+            <label>Full name</label>
+            <input class="input" placeholder="Jordan Cole">
+          </div>
+          <div class="field">
+            <label>Email</label>
+            <input class="input" type="email" placeholder="you@example.com">
+          </div>
+          <div class="field">
+            <label>Password</label>
+            <div class="input-icon-wrap">
+              <input class="input" id="pwInput" type="password" placeholder="Create a password" oninput="updateStrength(this.value)">
+              <button class="input-icon-btn">${icon('eye','icon-sm')}</button>
+            </div>
+            <div class="strength-row" id="strengthRow">
+              <div class="strength-seg"></div><div class="strength-seg"></div><div class="strength-seg"></div><div class="strength-seg"></div>
+            </div>
+            <div class="helper" id="strengthLabel">Weak</div>
+          </div>
+          <div class="field">
+            <label>Confirm password</label>
+            <input class="input" type="password" placeholder="Re-enter password">
+          </div>
+          <label class="checkbox-row"><input type="checkbox" checked> I agree to the Terms of Service and Privacy Policy</label>
+          <button class="btn btn-primary btn-block" onclick="go('verify',event)">Create Account</button>
+        </div>
+        <p class="t-helper" style="text-align:center;margin-top:22px;">Already have an account? <a href="#" style="color:var(--color-primary);font-weight:600;" onclick="go('login',event)">Log in</a></p>
+      </div>
+    </div>
+  </div>
+  <style>@media (max-width:800px){.auth-left{display:none;}.auth-grid{grid-template-columns:1fr;}}</style>`;
+}
+function updateStrength(val){
+  const segs = document.querySelectorAll('#strengthRow .strength-seg');
+  const label = document.getElementById('strengthLabel');
+  let score = 0;
+  if(val.length>=6) score++;
+  if(val.length>=10) score++;
+  if(/[A-Z]/.test(val) && /[0-9]/.test(val)) score++;
+  if(/[^A-Za-z0-9]/.test(val)) score++;
+  const colors = ['var(--color-danger)','var(--color-warning)','#CA8A04','var(--color-success)'];
+  const labels = ['Weak','Fair','Good','Strong'];
+  segs.forEach((s,i)=>{ s.style.background = i<score ? colors[Math.max(score-1,0)] : '#E2E8F0'; });
+  label.textContent = val.length===0 ? 'Weak' : labels[Math.max(score-1,0)];
+}
+window.updateStrength = updateStrength;
+
+/* =========================================================================
+   PAGE: VERIFY (OTP)
+========================================================================= */
+function pageVerify(){
+  return `
+  <div style="min-height:100dvh;display:flex;align-items:center;justify-content:center;background:var(--color-tint);padding:24px;">
+    <div class="card modal-surface" style="padding:44px;max-width:440px;width:100%;text-align:center;">
+      <div class="kbadge" style="background:var(--color-tint);color:var(--color-primary);margin:0 auto 18px;width:56px;height:56px;">${icon('mail','icon-lg')}</div>
+      <h1 class="h-display2">Verify your email</h1>
+      <p class="t-body" style="margin-top:6px;">We sent a 6-digit code to <strong>jordan@example.com</strong>. Enter it below, or click the link in your inbox.</p>
+      <div class="otp-row" style="margin:28px 0 8px;" id="otpRow">
+        ${[0,1,2,3,4,5].map(i=>`<input maxlength="1" class="otp-box t-otp" oninput="otpAdvance(this,${i})" onpaste="otpPaste(event)">`).join('')}
+      </div>
+      <button class="btn btn-primary btn-block" style="margin-top:20px;" onclick="go('dashboard',event)">Verify Email</button>
+      <p class="t-helper" style="margin-top:18px;">Didn't get it? <a href="#" style="color:var(--color-primary);font-weight:600;">Resend code</a> <span id="cooldown">(0:58)</span></p>
+    </div>
+  </div>`;
+}
+function otpAdvance(el, idx){
+  el.value = el.value.replace(/[^0-9]/g,'');
+  if(el.value && el.nextElementSibling) el.nextElementSibling.focus();
+}
+function otpPaste(ev){
+  ev.preventDefault();
+  const text = (ev.clipboardData.getData('text')||'').replace(/[^0-9]/g,'').slice(0,6);
+  const boxes = document.querySelectorAll('#otpRow .otp-box');
+  text.split('').forEach((ch,i)=>{ if(boxes[i]) boxes[i].value = ch; });
+  if(boxes[Math.min(text.length,5)]) boxes[Math.min(text.length,5)].focus();
+}
+window.otpAdvance = otpAdvance; window.otpPaste = otpPaste;
+
+/* =========================================================================
+   PAGE: STUDENT DASHBOARD
+========================================================================= */
+function pageDashboard(){
+  const enrolled = COURSES.slice(0,4).map((c,i)=>({...c, progress:[72,35,90,12][i]}));
+  return `
+  <div class="app-shell">
+    ${appSidebar('student','dashboard')}
+    <div class="app-main">
+      ${appTopbar('Dashboard','Student')}
+      <div class="app-content">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:28px;">
+          <div class="stat-card"><div class="t-helper">Courses enrolled</div><div class="stat-num">7</div></div>
+          <div class="stat-card"><div class="t-helper">In progress</div><div class="stat-num">4</div></div>
+          <div class="stat-card"><div class="t-helper">Certificates earned</div><div class="stat-num">3</div></div>
+        </div>
+
+        <div class="card" style="padding:24px;display:flex;gap:24px;align-items:center;margin-bottom:32px;background:linear-gradient(135deg,var(--color-primary),var(--color-ink));border:none;">
+          <div style="width:110px;aspect-ratio:16/9;border-radius:12px;flex-shrink:0;background:${thumbGradient(1)};"></div>
+          <div style="flex:1;color:#fff;">
+            <div class="t-micro" style="color:var(--color-secondary);">Continue Learning</div>
+            <div style="font-weight:700;font-size:17px;margin:4px 0 8px;">${COURSES[0].title}</div>
+            <div class="progress-track" style="max-width:320px;background:rgba(255,255,255,.18);"><div class="progress-fill" style="width:72%;background:var(--color-secondary);"></div></div>
+            <div class="t-helper" style="color:#AEC4DB;margin-top:6px;">72% complete &middot; 4 lessons left</div>
+          </div>
+          <button class="btn btn-primary" style="background:#fff;color:var(--color-primary);flex-shrink:0;" onclick="go('player',event)">Resume Lesson</button>
+        </div>
+
+        <h2 class="h-section" style="margin-bottom:16px;">Your courses</h2>
+        <div class="grid-courses">
+          ${enrolled.map(c=>`
+          <a href="#" class="course-card" onclick="go('player',event)">
+            <div class="course-thumb" style="background:${thumbGradient(c.id)}"></div>
+            <div class="course-body">
+              <div class="course-title">${c.title}</div>
+              <div class="progress-track"><div class="progress-fill" style="width:${c.progress}%;"></div></div>
+              <div class="t-helper">${c.progress}% complete</div>
+            </div>
+          </a>`).join('')}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* =========================================================================
+   PAGE: COURSE PLAYER
+========================================================================= */
+function pagePlayer(){
+  const sections = curriculumData();
+  return `
+  <div style="min-height:100dvh;display:flex;flex-direction:column;background:var(--color-ink);">
+    <div style="height:60px;display:flex;align-items:center;gap:16px;padding:0 20px;background:var(--color-ink);border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0;">
+      <button class="btn btn-ghost btn-sm" style="color:#fff;" onclick="go('dashboard',event)">${icon('arrowLeft','icon-sm')} Exit</button>
+      <div style="color:#fff;font-weight:600;font-size:14px;">${COURSES[0].title}</div>
+      <div style="margin-left:auto;color:#AEC4DB;font-size:12.5px;">72% complete</div>
+    </div>
+    <div style="flex:1;display:grid;grid-template-columns:1fr 340px;min-height:0;" class="player-grid">
+      <div style="display:flex;flex-direction:column;overflow-y:auto;">
+        <div style="aspect-ratio:16/9;background:#000;display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0;">
+          <div class="play-btn">${icon('play')}</div>
+          <div style="position:absolute;bottom:16px;left:16px;right:16px;height:4px;background:rgba(255,255,255,.2);border-radius:99px;"><div style="width:38%;height:100%;background:var(--color-secondary);border-radius:99px;"></div></div>
+        </div>
+        <div style="background:#fff;padding:28px 32px;flex:1;">
+          <h2 class="h-section">Server vs client components</h2>
+          <p class="t-body" style="margin-top:10px;">In this lesson we break down when to reach for a Server Component versus a Client Component, and how that decision shapes data fetching, bundle size, and interactivity throughout the app.</p>
+        </div>
+        <div style="background:#fff;border-top:1px solid var(--color-border);padding:16px 32px;display:flex;justify-content:space-between;flex-shrink:0;">
+          <button class="btn btn-secondary">${icon('arrowLeft','icon-sm')} Previous</button>
+          <button class="btn btn-primary" style="background:var(--color-success);">${icon('check','icon-sm')} Mark as Complete</button>
+          <button class="btn btn-secondary">Next ${icon('arrowRight','icon-sm')}</button>
+        </div>
+      </div>
+      <aside style="background:#fff;border-left:1px solid var(--color-border);overflow-y:auto;">
+        <div style="padding:18px 20px;border-bottom:1px solid var(--color-border);font-weight:700;font-size:14px;">Course content</div>
+        ${sections.map((sec,si)=>`
+        <div>
+          <div style="padding:12px 20px;background:#F8FAFC;font-weight:600;font-size:13px;border-bottom:1px solid var(--color-border);">${sec.title}</div>
+          ${sec.lessons.map((l,li)=>`
+          <div style="display:flex;align-items:center;gap:10px;padding:11px 20px;border-bottom:1px solid var(--color-border);font-size:13px;${si===1&&li===1?'background:var(--color-tint);':''}">
+            ${icon(si===0?'checkCircle':'video','icon-sm')}
+            <span style="flex:1;color:${si===0?'var(--color-success)':'#334155'};">${l.name}</span>
+            <span class="t-helper" style="font-size:11.5px;">${l.dur}</span>
+          </div>`).join('')}
+        </div>`).join('')}
+      </aside>
+    </div>
+  </div>
+  <style>@media (max-width:860px){.player-grid{grid-template-columns:1fr !important;}}</style>`;
+}
+
+/* =========================================================================
+   PAGE: INSTRUCTOR DASHBOARD
+========================================================================= */
+function pageInstructorDashboard(){
+  const bars = [40,55,48,70,62,80,74,90,85,95,88,100];
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `
+  <div class="app-shell">
+    ${appSidebar('instructor','instructor-dashboard')}
+    <div class="app-main">
+      ${appTopbar('Instructor Overview','Instructor')}
+      <div class="app-content">
+        <div class="card" style="padding:16px 20px;display:flex;align-items:center;gap:14px;margin-bottom:24px;border-color:#FDE68A;background:#FFFBEB;">
+          <div class="kbadge" style="background:#FEF3C7;color:var(--color-warning);">${icon('bank')}</div>
+          <div style="flex:1;">
+            <div style="font-weight:600;font-size:14px;">Payout setup incomplete</div>
+            <div class="t-helper">Connect your bank account with Stripe to receive payouts and publish courses.</div>
+          </div>
+          <button class="btn btn-primary btn-sm" style="background:var(--color-warning);">Connect Stripe</button>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:28px;">
+          <div class="stat-card"><div class="t-helper">Gross revenue</div><div class="stat-num">$48,210</div></div>
+          <div class="stat-card"><div class="t-helper">Net earnings</div><div class="stat-num">$36,158</div></div>
+          <div class="stat-card"><div class="t-helper">Active students</div><div class="stat-num">3,842</div></div>
+          <div class="stat-card"><div class="t-helper">Avg. rating</div><div class="stat-num">4.8</div></div>
+        </div>
+
+        <div class="card" style="padding:24px;margin-bottom:28px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+            <div class="h-card">Monthly earnings</div>
+            <span class="pill pill-success">${icon('trend','icon-sm')} +18% vs last year</span>
+          </div>
+          <div style="display:flex;align-items:flex-end;gap:10px;height:160px;">
+            ${bars.map((h,i)=>`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;">
+              <div style="width:100%;height:${h}px;border-radius:6px 6px 0 0;background:${i===bars.length-1?'var(--color-primary)':'var(--color-secondary)'};"></div>
+              <span class="t-helper" style="font-size:11px;">${months[i]}</span>
+            </div>`).join('')}
+          </div>
+        </div>
+
+        <div class="h-card" style="margin-bottom:14px;">Recent courses</div>
+        <div class="card" style="overflow:hidden;">
+          <table class="data-table">
+            <thead><tr><th>Course</th><th>Status</th><th>Students</th><th>Revenue</th></tr></thead>
+            <tbody>
+              ${COURSES.slice(0,3).map((c,i)=>`
+              <tr>
+                <td style="display:flex;align-items:center;gap:10px;"><div class="table-thumb" style="background:${thumbGradient(c.id)}"></div>${c.title}</td>
+                <td><span class="pill ${i===0?'pill-success':i===1?'pill-warning':'pill-gray'}">${i===0?'Published':i===1?'Pending Review':'Draft'}</span></td>
+                <td>${(c.reviews/10).toFixed(0)}</td>
+                <td>$${(c.price*c.reviews/12).toFixed(0)}</td>
+              </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* =========================================================================
+   PAGE: INSTRUCTOR COURSES TABLE
+========================================================================= */
+function pageInstructorCourses(){
+  const rows = [
+    {c:COURSES[0], status:'published', students:1240},
+    {c:COURSES[6], status:'pending', students:0},
+    {c:COURSES[1], status:'rejected', students:0, reason:'Needs higher video resolution in Section 2.'},
+    {c:COURSES[7], status:'draft', students:0},
+  ];
+  const statusPill = s => s==='published'?'<span class="pill pill-success">Published</span>':s==='pending'?'<span class="pill pill-warning">Pending Review</span>':s==='rejected'?'<span class="pill pill-danger">Rejected</span>':'<span class="pill pill-gray">Draft</span>';
+  return `
+  <div class="app-shell">
+    ${appSidebar('instructor','instructor-courses')}
+    <div class="app-main">
+      ${appTopbar('My Courses','Instructor')}
+      <div class="app-content">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+          <p class="t-helper">${rows.length} courses</p>
+          <button class="btn btn-primary btn-sm">${icon('plus','icon-sm')} New Course</button>
+        </div>
+        <div class="card" style="overflow:visible;">
+          <table class="data-table">
+            <thead><tr><th>Course</th><th>Price</th><th>Students</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              ${rows.map((r,i)=>`
+              <tr>
+                <td style="display:flex;align-items:center;gap:10px;max-width:340px;"><div class="table-thumb" style="background:${thumbGradient(r.c.id)}"></div>${r.c.title}</td>
+                <td>$${r.c.price}</td>
+                <td>${r.students}</td>
+                <td style="position:relative;">
+                  ${statusPill(r.status)}
+                  ${r.reason?`<div class="t-helper" style="margin-top:4px;color:var(--color-danger);max-width:220px;">${r.reason}</div>`:''}
+                </td>
+                <td>
+                  ${r.status==='rejected'?'<button class="btn btn-secondary btn-sm">Edit &amp; Resubmit</button>':r.status==='draft'?'<button class="btn btn-secondary btn-sm">Continue Editing</button>':'<button class="btn btn-ghost btn-sm">Manage</button>'}
+                </td>
+              </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* =========================================================================
+   PAGE: ADMIN REVIEW QUEUE
+========================================================================= */
+function pageAdminPending(){
+  return `
+  <div class="app-shell">
+    ${appSidebar('admin','admin-pending')}
+    <div class="app-main">
+      ${appTopbar('Course Review Queue','Administrator')}
+      <div class="app-content">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:28px;">
+          <div class="stat-card"><div class="t-helper">Commission earned</div><div class="stat-num">$12,940</div></div>
+          <div class="stat-card"><div class="t-helper">Sales volume</div><div class="stat-num">$212K</div></div>
+          <div class="stat-card"><div class="t-helper">Registered users</div><div class="stat-num">18,402</div></div>
+          <div class="stat-card"><div class="t-helper">Pending review</div><div class="stat-num" style="color:var(--color-warning);">2</div></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:340px 1fr;gap:24px;" class="admin-grid">
+          <div class="card" style="overflow:hidden;">
+            <div style="padding:14px 18px;border-bottom:1px solid var(--color-border);font-weight:700;font-size:13.5px;">Pending Review (2)</div>
+            <a href="#" style="display:flex;gap:12px;padding:14px 18px;border-bottom:1px solid var(--color-border);background:var(--color-tint);">
+              <div class="table-thumb" style="background:${thumbGradient(COURSES[6].id)}"></div>
+              <div><div style="font-weight:600;font-size:13.5px;">${COURSES[6].title}</div><div class="t-helper">by ${COURSES[6].instr}</div></div>
+            </a>
+            <a href="#" style="display:flex;gap:12px;padding:14px 18px;">
+              <div class="table-thumb" style="background:${thumbGradient(COURSES[5].id)}"></div>
+              <div><div style="font-weight:600;font-size:13.5px;">${COURSES[5].title}</div><div class="t-helper">by ${COURSES[5].instr}</div></div>
+            </a>
+          </div>
+
+          <div class="card" style="padding:26px;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;">
+              <div>
+                <div class="h-card">${COURSES[6].title}</div>
+                <div class="t-helper" style="margin-top:4px;">Submitted by ${COURSES[6].instr} &middot; ${COURSES[6].lessons} lessons &middot; ${COURSES[6].hours}h</div>
+              </div>
+              <span class="pill pill-warning">Pending Review</span>
+            </div>
+            <div class="video-frame" style="margin-bottom:18px;"><div class="play-btn">${icon('play')}</div></div>
+            <div class="h-card" style="margin-bottom:10px;">Curriculum</div>
+            ${curriculumData().map(sec=>`
+            <div style="padding:10px 0;border-bottom:1px solid var(--color-border);">
+              <div style="font-weight:600;font-size:13.5px;">${sec.title}</div>
+              <div class="t-helper">${sec.lessons.length} lessons</div>
+            </div>`).join('')}
+            <div style="display:flex;gap:12px;margin-top:22px;">
+              <button class="btn btn-primary" style="background:var(--color-success);flex:1;">${icon('check','icon-sm')} Approve &amp; Publish</button>
+              <button class="btn btn-danger-ghost" style="border:1px solid var(--color-border);flex:1;">${icon('x','icon-sm')} Reject Course</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <style>@media (max-width:860px){.admin-grid{grid-template-columns:1fr !important;}}</style>`;
+}
+
+/* =========================================================================
+   RENDER
+========================================================================= */
+function render(){
+  const root = document.getElementById('root');
+  const map = {
+    'landing': pageLanding, 'catalog': pageCatalog, 'course-detail': pageCourseDetail,
+    'login': pageLogin, 'signup': pageSignup, 'verify': pageVerify,
+    'dashboard': pageDashboard, 'player': pagePlayer,
+    'instructor-dashboard': pageInstructorDashboard, 'instructor-courses': pageInstructorCourses,
+    'admin-pending': pageAdminPending,
+  };
+  const fn = map[state.page] || pageLanding;
+  root.innerHTML = `<div class="fade-in">${fn()}</div>`;
+  renderProtoSwitch();
+}
+render();
+</script>
+</body>
+</html>
