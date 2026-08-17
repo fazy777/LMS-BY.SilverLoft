@@ -3,12 +3,13 @@ import { transaction } from '../lib/db.js';
 import { getStripe } from '../lib/stripe.js';
 import { applyPaidSession } from './enrollment.service.js';
 
-export function constructStripeEvent(rawBody, signature) {
+export async function constructStripeEvent(rawBody, signature) {
   if (!process.env.STRIPE_WEBHOOK_SECRET) {
     throw new AppError('NOT_CONFIGURED', 'STRIPE_WEBHOOK_SECRET is not configured.', 501);
   }
   try {
-    return getStripe().webhooks.constructEvent(rawBody, signature, process.env.STRIPE_WEBHOOK_SECRET);
+    const stripe = await getStripe();
+    return stripe.webhooks.constructEvent(rawBody, signature, process.env.STRIPE_WEBHOOK_SECRET);
   } catch {
     throw new AppError('INVALID_SIGNATURE', 'Stripe signature verification failed.', 400);
   }

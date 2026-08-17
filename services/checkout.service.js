@@ -31,7 +31,7 @@ export async function createCheckoutSession(userId, courseId, { successUrl, canc
 
     const [userRows] = await query('SELECT email FROM users WHERE id = ? LIMIT 1', [userId]);
 
-    const stripe = getStripe();
+    const stripe = await getStripe();
     const session = await stripe.checkout.sessions.create({
         mode: 'payment',
         line_items: [

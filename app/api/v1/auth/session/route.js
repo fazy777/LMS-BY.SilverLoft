@@ -16,7 +16,13 @@ export async function POST(request) {
             );
         }
 
-        const auth = adminAuth();
+        const auth = await adminAuth();
+        if (!auth) {
+            return NextResponse.json(
+                { success: false, error: { code: "AUTH_UNAVAILABLE", message: "Firebase Admin is not configured. Please check FIREBASE_CLIENT_EMAIL and FIREBASE_PRIVATE_KEY." } },
+                { status: 500 }
+            );
+        }
 
         // 1. Verify the Firebase ID token — this is the ONLY source of truth
         //    for firebase_uid/email. Never trust these values if sent raw in the body.
@@ -150,9 +156,11 @@ export async function DELETE(request) {
             return NextResponse.json({ success: true, data: null });
         }
         try {
-            const auth = adminAuth();
-            const decoded = await auth.verifySessionCookie(sessionCookie);
-            await auth.revokeRefreshTokens(decoded.uid);
+            const auth = await adminAuth();
+            if (auth) {
+                const decoded = await auth.verifySessionCookie(sessionCookie);
+                await auth.revokeRefreshTokens(decoded.uid);
+            }
         } catch (err) {
             console.error("Session revoke error:", err);
         }

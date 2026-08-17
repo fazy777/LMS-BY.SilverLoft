@@ -70,7 +70,7 @@ export async function startStripeOnboarding(userId, { refreshUrl, returnUrl, tes
         return { url: returnUrl, account_id: accountId, onboarded: true };
     }
 
-    const stripe = getStripe();
+    const stripe = await getStripe();
     let accountId = profile.stripe_connect_account_id;
 
     try {
@@ -130,7 +130,7 @@ export async function getOnboardingStatus(userId) {
         };
     }
 
-    const stripe = getStripe();
+    const stripe = await getStripe();
     let account;
     try {
         account = await stripe.accounts.retrieve(profile.stripe_connect_account_id);

@@ -15,7 +15,7 @@ export const POST = handle(async (req) => {
 
     // constructEvent needs the RAW body — parse nothing before verification.
     const rawBody = await req.text();
-    const event = constructStripeEvent(rawBody, signature);
+    const event = await constructStripeEvent(rawBody, signature);
 
     const result = await handleStripeEvent(event);
     return { received: true, type: event.type, ...result };

@@ -61,7 +61,7 @@ export async function GET() {
 
     // 2. Test Firebase Admin
     try {
-      const auth = adminAuth();
+      const auth = await adminAuth();
       if (auth && (diagnostics.firebaseAdmin.hasClientEmail || diagnostics.firebaseAdmin.hasServiceAccount)) {
         diagnostics.firebaseAdmin.status = 'configured';
       } else {
@@ -77,7 +77,7 @@ export async function GET() {
     // 3. Test Stripe
     try {
       if (process.env.STRIPE_SECRET_KEY) {
-        const stripe = getStripe();
+        const stripe = await getStripe();
         if (stripe) {
           diagnostics.stripe.status = 'configured';
         }
