@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  serverExternalPackages: ['firebase-admin', 'mysql2', 'stripe'],
+  serverExternalPackages: ['mysql2'],
 };
 
 export default nextConfig;
