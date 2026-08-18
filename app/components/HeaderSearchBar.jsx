@@ -105,21 +105,21 @@ function HeaderSearchBarInner({
   }
 
   return (
-    <div ref={containerRef} className={`header-search relative ${className}`} style={{ width: '100%' }}>
+    <div ref={containerRef} className={`header-search relative min-w-0 ${className}`} style={{ width: '100%' }}>
       <form onSubmit={handleSubmit} className="relative flex items-center w-full">
-        <span className="icon absolute left-3.5 top-1/2 -translate-y-1/2 text-[#64748B] pointer-events-none transition-colors">
-          <SearchIcon size={17} color={isFocused ? '#112A46' : '#64748B'} />
+        <span className="icon absolute left-2.5 sm:left-3.5 top-1/2 -translate-y-1/2 text-[#64748B] pointer-events-none transition-colors">
+          <SearchIcon size={15} color={isFocused ? '#112A46' : '#64748B'} />
         </span>
 
         <input
           ref={inputRef}
           type="text"
-          className={`input w-full h-11 text-sm bg-white border rounded-full outline-none transition-all text-[#0B1B2E] ${
+          className={`input w-full h-8 sm:h-9 md:h-10 text-xs sm:text-sm bg-white border rounded-full outline-none transition-all text-[#0B1B2E] ${
             isFocused
-              ? 'border-[#112A46] ring-3 ring-[#112A46]/10 pl-10 pr-10'
+              ? 'border-[#112A46] ring-2 sm:ring-3 ring-[#112A46]/10 pl-8 sm:pl-9 pr-7 sm:pr-9'
               : query
-              ? 'border-[#CBD5E1] pl-10 pr-10'
-              : 'border-[#CBD5E1] pl-10 pr-16 hover:border-[#94A3B8]'
+              ? 'border-[#CBD5E1] pl-8 sm:pl-9 pr-7 sm:pr-9'
+              : 'border-[#CBD5E1] pl-8 sm:pl-9 pr-3 sm:pr-6 hover:border-[#94A3B8]'
           }`}
           placeholder={placeholder}
           value={query}
@@ -143,7 +143,7 @@ function HeaderSearchBarInner({
           <button
             type="button"
             onClick={handleClear}
-            className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center rounded-full bg-[#E2E8F0] hover:bg-[#CBD5E1] text-[#64748B] hover:text-[#0B1B2E] text-xs font-bold transition-colors cursor-pointer"
+            className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center rounded-full bg-[#E2E8F0] hover:bg-[#CBD5E1] text-[#64748B] hover:text-[#0B1B2E] text-[10px] sm:text-xs font-bold transition-colors cursor-pointer"
             aria-label="Clear search"
           >
             ✕
