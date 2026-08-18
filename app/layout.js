@@ -19,6 +19,13 @@ export const metadata = {
   description: "Marketplace LMS for independent instructors and students",
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: "#112A46",
+};
+
 import { Suspense } from "react";
 import AppLayout from "./components/AppLayout";
 

@@ -155,7 +155,7 @@ function HeaderSearchBarInner({
       {isOpen && query.trim().length > 0 && (
         <div
           className="search-dropdown-menu absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl shadow-[0_16px_40px_rgba(17,42,70,0.18)] border border-[#E2E8F0] py-2 z-50 overflow-hidden text-left"
-          style={{ minWidth: 260, maxWidth: '100%', maxHeight: 'min(420px, 65vh)', overflowY: 'auto' }}
+          style={{ width: '100%', maxWidth: '100%', maxHeight: 'min(420px, 65vh)', overflowY: 'auto' }}
         >
           {loading ? (
             <div className="flex items-center justify-center gap-2 py-6 text-sm text-[#64748B]">

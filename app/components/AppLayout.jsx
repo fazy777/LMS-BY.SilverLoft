@@ -168,33 +168,33 @@ export default function AppLayout({ children }) {
   // ─────────────────────────────────────────────────────────────
   if (isMarketingPage) {
     return (
-      <div className="min-h-screen flex flex-col bg-[#F0F5FB]">
+      <div className="min-h-screen flex flex-col bg-[#F0F5FB] w-full max-w-full overflow-x-hidden">
         {/* Site Header */}
-        <header className="site-header sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#E2E8F0]">
-          <div className="wrap flex items-center justify-between h-16 sm:h-[70px] px-3 sm:px-6 lg:px-8 gap-2 sm:gap-4">
+        <header className="site-header sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#E2E8F0] w-full max-w-full">
+          <div className="wrap flex items-center justify-between h-14 sm:h-[68px] px-2.5 sm:px-6 lg:px-8 gap-1.5 sm:gap-4 w-full max-w-full min-w-0">
             {/* Left: Hamburger (Mobile/Tablet) + Logo */}
-            <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
-              {/* Mobile Hamburger Menu Toggle with 44px min target */}
+            <div className="flex items-center gap-1 sm:gap-2.5 shrink-0 min-w-0">
+              {/* Mobile Hamburger Menu Toggle */}
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="lg:hidden w-10 h-10 -ml-1 flex items-center justify-center rounded-xl text-[#112A46] hover:bg-[#EAF1FA] active:bg-[#D9E6F5] transition-colors cursor-pointer"
+                className="lg:hidden w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl text-[#112A46] hover:bg-[#EAF1FA] active:bg-[#D9E6F5] transition-colors cursor-pointer shrink-0"
                 aria-label="Open navigation menu"
                 aria-expanded={mobileMenuOpen}
               >
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="3" y1="12" x2="21" y2="12" />
                   <line x1="3" y1="6" x2="21" y2="6" />
                   <line x1="3" y1="18" x2="21" y2="18" />
                 </svg>
               </button>
 
-              <Link href="/" className="logo flex items-center gap-2 sm:gap-2.5 select-none">
+              <Link href="/" className="logo flex items-center gap-1.5 sm:gap-2.5 select-none shrink-0 min-w-0">
                 <span className="mark shrink-0">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                     <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </span>
-                <span className="font-display font-black text-base sm:text-lg md:text-xl text-[#112A46] tracking-tight whitespace-nowrap">
+                <span className="font-display font-black text-sm sm:text-lg md:text-xl text-[#112A46] tracking-tight whitespace-nowrap">
                   Silver Loft
                 </span>
               </Link>
@@ -219,29 +219,29 @@ export default function AppLayout({ children }) {
             </nav>
 
             {/* Search Bar on Tablet/Desktop (>= 640px) */}
-            <div className="hidden sm:block flex-1 max-w-xs md:max-w-sm lg:max-w-md mx-2">
+            <div className="hidden sm:block flex-1 max-w-xs md:max-w-sm lg:max-w-md mx-2 min-w-0">
               <HeaderSearchBar />
             </div>
 
             {/* Header Actions (Right) */}
-            <div className="header-actions flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+            <div className="header-actions flex items-center gap-1 sm:gap-2 shrink-0 min-w-0">
               {/* Mobile Search Toggle Button (< 640px) */}
               <button
                 onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
-                className="sm:hidden w-9 h-9 flex items-center justify-center rounded-xl text-[#112A46] hover:bg-[#EAF1FA] active:bg-[#D9E6F5] transition-colors cursor-pointer"
+                className="sm:hidden w-8 h-8 flex items-center justify-center rounded-xl text-[#112A46] hover:bg-[#EAF1FA] active:bg-[#D9E6F5] transition-colors cursor-pointer shrink-0"
                 aria-label="Toggle search bar"
               >
-                <SearchIcon size={19} color="#112A46" />
+                <SearchIcon size={18} color="#112A46" />
               </button>
 
               {user ? (
-                <div className="relative">
+                <div className="relative shrink-0">
                   <button
                     onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                    className="flex items-center gap-2 p-1 sm:px-2 sm:py-1 rounded-full hover:bg-[#EAF1FA] transition-colors cursor-pointer"
+                    className="flex items-center gap-1.5 p-1 sm:px-2 sm:py-1 rounded-full hover:bg-[#EAF1FA] transition-colors cursor-pointer"
                     aria-label="User account menu"
                   >
-                    <div className="avatar text-xs w-8 h-8 sm:w-9 sm:h-9">{initials}</div>
+                    <div className="avatar text-[11px] w-7 h-7 sm:w-8 sm:h-8">{initials}</div>
                     <span className="hidden lg:inline text-[13px] font-bold text-[#112A46] leading-tight truncate max-w-[110px]">
                       {displayName}
                     </span>
@@ -251,10 +251,10 @@ export default function AppLayout({ children }) {
                   </button>
 
                   {userDropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-60 bg-white rounded-2xl shadow-[0_20px_50px_rgba(17,42,70,0.18)] border border-[#E2E8F0] p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-                      <div className="px-3.5 py-2.5 border-b border-[#F1F5F9] mb-1 bg-[#F8FAFC] rounded-xl">
-                        <div className="font-bold text-[13.5px] text-[#112A46] truncate">{displayName}</div>
-                        <div className="text-[11.5px] text-[#64748B] truncate">{user.email}</div>
+                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-[0_20px_50px_rgba(17,42,70,0.18)] border border-[#E2E8F0] p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                      <div className="px-3 py-2 border-b border-[#F1F5F9] mb-1 bg-[#F8FAFC] rounded-xl">
+                        <div className="font-bold text-xs text-[#112A46] truncate">{displayName}</div>
+                        <div className="text-[11px] text-[#64748B] truncate">{user.email}</div>
                         <div className="mt-1">
                           <span className="pill text-[9px] font-bold bg-[#EAF1FA] text-[#112A46] uppercase">
                             {user.is_admin ? 'Admin' : user.is_instructor ? 'Instructor' : 'Student'}
@@ -264,37 +264,37 @@ export default function AppLayout({ children }) {
                       <Link
                         href="/dashboard"
                         onClick={() => setUserDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-[13px] font-semibold text-[#334155] hover:bg-[#F0F5FB] hover:text-[#112A46]"
+                        className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-[#334155] hover:bg-[#F0F5FB] hover:text-[#112A46]"
                       >
-                        <GridIcon size={16} /> Student Dashboard
+                        <GridIcon size={15} /> Student Dashboard
                       </Link>
                       <Link
                         href="/instructor"
                         onClick={() => setUserDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-[13px] font-semibold text-[#334155] hover:bg-[#F0F5FB] hover:text-[#112A46]"
+                        className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-[#334155] hover:bg-[#F0F5FB] hover:text-[#112A46]"
                       >
-                        <BookOpenIcon size={16} /> Instructor Studio
+                        <BookOpenIcon size={15} /> Instructor Studio
                       </Link>
                       {isSuperAdmin && (
                         <Link
                           href="/admin"
                           onClick={() => setUserDropdownOpen(false)}
-                          className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-[13px] font-semibold text-[#7C3AED] hover:bg-[#EDE9FE]"
+                          className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-[#7C3AED] hover:bg-[#EDE9FE]"
                         >
-                          <ChartIcon size={16} /> Admin Portal
+                          <ChartIcon size={15} /> Admin Portal
                         </Link>
                       )}
                       <Link
                         href="/account"
                         onClick={() => setUserDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-[13px] font-semibold text-[#334155] hover:bg-[#F0F5FB] hover:text-[#112A46]"
+                        className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-[#334155] hover:bg-[#F0F5FB] hover:text-[#112A46]"
                       >
-                        <UserIcon size={16} /> Account Settings
+                        <UserIcon size={15} /> Account Settings
                       </Link>
                       <div className="border-t border-[#F1F5F9] my-1" />
                       <button
                         onClick={handleSignOut}
-                        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[13px] font-bold text-[#DC2626] hover:bg-[#FEF2F2] cursor-pointer"
+                        className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold text-[#DC2626] hover:bg-[#FEF2F2] cursor-pointer"
                       >
                         Sign out
                       </button>
@@ -302,16 +302,16 @@ export default function AppLayout({ children }) {
                   )}
                 </div>
               ) : (
-                <div className="flex items-center gap-1 sm:gap-2">
+                <div className="flex items-center gap-1 sm:gap-2 shrink-0">
                   <Link
                     href="/login"
-                    className="btn btn-ghost btn-sm font-bold text-xs sm:text-sm px-2.5 sm:px-4 h-8 sm:h-9 text-[#112A46] hidden xs:inline-flex"
+                    className="btn btn-ghost btn-sm font-bold text-xs sm:text-sm px-2 sm:px-3 h-8 sm:h-9 text-[#112A46] hidden sm:inline-flex"
                   >
                     Log in
                   </Link>
                   <Link
                     href="/signup"
-                    className="btn btn-primary btn-sm font-bold text-xs sm:text-sm px-3 sm:px-4 h-8 sm:h-9 shadow-sm whitespace-nowrap"
+                    className="btn btn-primary btn-sm font-bold text-xs sm:text-sm px-2.5 sm:px-4 h-8 sm:h-9 shadow-sm whitespace-nowrap"
                   >
                     Sign up
                   </Link>
@@ -322,12 +322,12 @@ export default function AppLayout({ children }) {
 
           {/* Mobile Search Row (Smooth Expandable Strip for < 640px) */}
           {mobileSearchOpen && (
-            <div className="sm:hidden px-3.5 pb-3 pt-1 border-t border-[#E2E8F0] bg-white shadow-md animate-in slide-in-from-top-1 duration-150">
+            <div className="sm:hidden px-3 pb-3 pt-1 border-t border-[#E2E8F0] bg-white shadow-md animate-in slide-in-from-top-1 duration-150">
               <div className="flex items-center gap-2">
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <HeaderSearchBar
                     autoFocus
-                    placeholder="Search courses, skills, tools..."
+                    placeholder="Search courses & skills..."
                     onAfterNavigate={() => setMobileSearchOpen(false)}
                   />
                 </div>
@@ -364,7 +364,7 @@ export default function AppLayout({ children }) {
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   <span className="mark">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                       <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#ACC8E5" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </span>
@@ -527,7 +527,7 @@ export default function AppLayout({ children }) {
         )}
 
         {/* Public Content Body */}
-        <main className="flex-1 min-w-0">
+        <main className="flex-1 min-w-0 w-full max-w-full">
           {children}
         </main>
 
@@ -580,7 +580,7 @@ export default function AppLayout({ children }) {
   }
 
   return (
-    <div className="app-shell min-h-screen flex">
+    <div className="app-shell min-h-screen flex w-full max-w-full overflow-x-hidden">
       {/* ── Desktop Sidebar (>= 1024px) ── */}
       <aside
         className="app-sidebar hidden lg:flex"
@@ -592,8 +592,8 @@ export default function AppLayout({ children }) {
       >
         {/* Logo */}
         <Link href="/" className="logo" style={{ color: '#FFFFFF', padding: '0 8px', overflow: 'hidden' }}>
-          <span className="mark">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <span className="mark shrink-0">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
               <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#ACC8E5" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </span>
@@ -660,7 +660,7 @@ export default function AppLayout({ children }) {
         {/* User profile & Sign Out */}
         <div style={{ paddingTop: 14, borderTop: '1px solid rgba(172,200,229,0.18)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '4px 6px', borderRadius: 10, marginBottom: 8 }}>
-            <div className="avatar" style={{ width: 34, height: 34, fontSize: 12 }}>{initials}</div>
+            <div className="avatar text-xs shrink-0" style={{ width: 34, height: 34 }}>{initials}</div>
             {sidebarOpen && (
               <div style={{ overflow: 'hidden', flex: 1 }}>
                 <div style={{ fontSize: 13, fontWeight: 700, color: '#FFFFFF', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', lineHeight: 1.3 }}>{displayName}</div>
@@ -706,12 +706,12 @@ export default function AppLayout({ children }) {
             onClick={() => setMobileDrawerOpen(false)}
             aria-hidden="true"
           />
-          <div className="drawer-panel p-5 flex flex-col justify-between">
+          <div className="drawer-panel p-5 flex flex-col justify-between overflow-hidden">
             {/* Header */}
             <div className="flex items-center justify-between pb-4 border-b border-white/15 mb-4">
               <Link href="/" className="logo flex items-center gap-2" style={{ color: '#FFFFFF' }} onClick={() => setMobileDrawerOpen(false)}>
                 <span className="mark">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                     <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#ACC8E5" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </span>
@@ -751,7 +751,7 @@ export default function AppLayout({ children }) {
             )}
 
             {/* Navigation Group */}
-            <div className="side-group flex-1 overflow-y-auto space-y-1 pr-1">
+            <div className="side-group flex-1 overflow-y-auto space-y-1 pr-1 no-scrollbar">
               <div className="side-label text-[#ACC8E5] font-extrabold text-[11px] tracking-wider uppercase">
                 {isAdminRoute ? 'Admin Portal' : role === 'instructor' ? 'Instructor Studio' : 'Student Learning'}
               </div>
@@ -806,57 +806,57 @@ export default function AppLayout({ children }) {
       )}
 
       {/* ── App Main Stage ── */}
-      <div className="app-main flex flex-col flex-1 min-w-0 min-h-screen pb-20 md:pb-0">
+      <div className="app-main flex flex-col flex-1 min-w-0 min-h-screen pb-20 md:pb-0 w-full max-w-full">
         {/* Topbar */}
-        <header className="app-topbar sticky top-0 z-30 h-16 sm:h-[70px] bg-white border-b border-[#E2E8F0] px-3.5 sm:px-6 lg:px-8 flex items-center justify-between">
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+        <header className="app-topbar sticky top-0 z-30 h-14 sm:h-[68px] bg-white border-b border-[#E2E8F0] px-2.5 sm:px-6 lg:px-8 flex items-center justify-between w-full max-w-full min-w-0">
+          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0 min-w-0 max-w-[65%] sm:max-w-none">
             {/* Mobile Drawer Trigger Button */}
             <button
               onClick={() => setMobileDrawerOpen(true)}
-              className="lg:hidden w-10 h-10 -ml-2 flex items-center justify-center rounded-xl text-[#112A46] hover:bg-[#EAF1FA] active:bg-[#D9E6F5] transition-colors cursor-pointer"
+              className="lg:hidden w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl text-[#112A46] hover:bg-[#EAF1FA] active:bg-[#D9E6F5] transition-colors cursor-pointer shrink-0"
               aria-label="Open navigation menu"
             >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="3" y1="12" x2="21" y2="12" />
                 <line x1="3" y1="6" x2="21" y2="6" />
                 <line x1="3" y1="18" x2="21" y2="18" />
               </svg>
             </button>
 
-            <h1 className="h-section text-sm sm:text-base md:text-lg font-bold text-[#112A46] truncate max-w-[160px] xs:max-w-[200px] sm:max-w-none m-0">
-              {isAdminRoute ? 'Admin Control Center' : role === 'instructor' ? 'Instructor Studio' : 'Learning Dashboard'}
+            <h1 className="h-section text-xs sm:text-base md:text-lg font-bold text-[#112A46] truncate m-0">
+              {isAdminRoute ? 'Admin Control' : role === 'instructor' ? 'Instructor Studio' : 'Dashboard'}
             </h1>
           </div>
 
-          <div className="ml-auto flex items-center gap-2 sm:gap-3">
+          <div className="ml-auto flex items-center gap-1.5 sm:gap-3 shrink-0 min-w-0">
             {/* Desktop Search Bar */}
-            <div className="hidden lg:block w-64">
+            <div className="hidden lg:block w-64 min-w-0">
               <HeaderSearchBar placeholder="Search courses..." />
             </div>
 
             {/* Mobile Search Toggle */}
             <button
               onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
-              className="lg:hidden w-9 h-9 flex items-center justify-center rounded-xl text-[#112A46] hover:bg-[#EAF1FA] transition-colors cursor-pointer"
+              className="lg:hidden w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-xl text-[#112A46] hover:bg-[#EAF1FA] transition-colors cursor-pointer shrink-0"
               aria-label="Quick search"
             >
-              <SearchIcon size={18} color="#112A46" />
+              <SearchIcon size={17} color="#112A46" />
             </button>
 
-            <Link href="/courses" className="btn btn-secondary btn-sm hidden sm:inline-flex font-bold text-xs h-9 px-3">
+            <Link href="/courses" className="btn btn-secondary btn-sm hidden sm:inline-flex font-bold text-xs h-8 sm:h-9 px-3 shrink-0">
               Explore Courses
             </Link>
 
             {/* User Avatar + Dropdown */}
-            <div className="relative">
+            <div className="relative shrink-0">
               <button
                 onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                className="flex items-center gap-2 pl-2 border-l border-[#E2E8F0] hover:opacity-80 transition-opacity cursor-pointer"
+                className="flex items-center gap-1.5 pl-1.5 sm:pl-2 border-l border-[#E2E8F0] hover:opacity-80 transition-opacity cursor-pointer"
                 aria-label="Account menu"
               >
-                <div className="avatar text-xs w-8 h-8 sm:w-9 sm:h-9">{initials}</div>
+                <div className="avatar text-[11px] w-7 h-7 sm:w-8 sm:h-8">{initials}</div>
                 <div className="hidden sm:block text-left">
-                  <div className="text-xs font-bold text-[#0B1B2E] leading-tight truncate max-w-[110px]">{displayName}</div>
+                  <div className="text-xs font-bold text-[#0B1B2E] leading-tight truncate max-w-[100px]">{displayName}</div>
                   <div className="text-[10px] text-[#64748B] capitalize leading-tight">
                     {isAdminRoute ? 'Admin' : role === 'instructor' ? 'Instructor' : 'Student'}
                   </div>
@@ -898,9 +898,9 @@ export default function AppLayout({ children }) {
 
         {/* Mobile Search Row in Workspace Topbar */}
         {mobileSearchOpen && (
-          <div className="lg:hidden px-4 pb-3 pt-1 border-b border-[#E2E8F0] bg-white shadow-sm animate-in slide-in-from-top-1 duration-150">
+          <div className="lg:hidden px-3 pb-3 pt-1 border-b border-[#E2E8F0] bg-white shadow-sm animate-in slide-in-from-top-1 duration-150">
             <div className="flex items-center gap-2">
-              <div className="flex-1">
+              <div className="flex-1 min-w-0">
                 <HeaderSearchBar
                   autoFocus
                   placeholder="Quick course search..."
@@ -919,7 +919,7 @@ export default function AppLayout({ children }) {
         )}
 
         {/* Content Area */}
-        <main className="app-content flex-1">
+        <main className="app-content flex-1 w-full max-w-full min-w-0">
           {children}
         </main>
 
