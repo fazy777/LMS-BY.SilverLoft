@@ -226,13 +226,8 @@ export default function AppLayout({ children }) {
               </Link>
             </nav>
 
-            {/* Search Bar (Inline across ALL screens: takes center space) */}
-            <div className="
-      flex-1
-      min-w-0
-      mx-2 sm:mx-3
-      lg:max-w-md
-    ">
+            {/* Search Bar on Tablet/Desktop (hidden on mobile) */}
+            <div className="hidden sm:block flex-1 min-w-0 mx-2 sm:mx-4 max-w-xs md:max-w-sm lg:max-w-md">
               <HeaderSearchBar placeholder="Search courses..." />
             </div>
 
@@ -827,8 +822,8 @@ export default function AppLayout({ children }) {
             </h1>
           </div>
 
-          {/* Inline Search Bar on Workspace */}
-          <div className="flex-1 min-w-0 mx-1.5 sm:mx-3 max-w-xs md:max-w-sm lg:max-w-md">
+          {/* Search Bar on Workspace (hidden on mobile, visible on tablet/desktop) */}
+          <div className="hidden sm:block flex-1 min-w-0 mx-2 sm:mx-3 max-w-xs md:max-w-sm lg:max-w-md">
             <HeaderSearchBar placeholder="Quick search..." />
           </div>
 
