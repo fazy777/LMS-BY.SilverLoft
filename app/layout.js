@@ -37,7 +37,9 @@ export default function RootLayout({ children }) {
     >
       <body className="min-h-full flex flex-col">
         <Suspense fallback={null}>
-          <AppLayout>{children}</AppLayout>
+          <AppLayout>
+            {children}
+            </AppLayout>
         </Suspense>
       </body>
     </html>

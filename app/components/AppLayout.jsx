@@ -129,8 +129,8 @@ export default function AppLayout({ children }) {
   const navItems = (isAdminRoute && isSuperAdmin)
     ? ADMIN_NAV
     : role === 'instructor'
-    ? INSTRUCTOR_NAV
-    : STUDENT_NAV
+      ? INSTRUCTOR_NAV
+      : STUDENT_NAV
 
   const isAuthPage = ['/login', '/signup', '/verify', '/forgot-password', '/forget'].some(p => pathname?.startsWith(p))
   const isPlayerPage = pathname?.startsWith('/learn')
@@ -170,20 +170,28 @@ export default function AppLayout({ children }) {
     return (
       <div className="min-h-screen flex flex-col bg-[#F0F5FB] w-full max-w-full overflow-x-hidden">
         {/* Site Header */}
-        <header className="site-header sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#E2E8F0] w-full max-w-full">
-          <div className="wrap flex items-center justify-between h-14 sm:h-[68px] px-2 sm:px-6 lg:px-8 gap-1.5 sm:gap-4 w-full max-w-full min-w-0">
+        <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#E2E8F0]">
+          <div className="h-14 sm:h-[68px] px-3 sm:px-6 lg:px-8 flex items-center gap-2">
             {/* Left: Hamburger (Mobile/Tablet) + Logo */}
             <div className="flex items-center gap-1 sm:gap-2.5 shrink-0 min-w-0">
               {/* Mobile Hamburger Menu Toggle */}
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="lg:hidden w-9 h-9 flex items-center justify-center rounded-xl text-[#112A46] hover:bg-[#EAF1FA] active:bg-[#D9E6F5] transition-colors cursor-pointer shrink-0"
+                className="lg:hidden w-9 h-9 shrink-0 flex items-center justify-center
+                 rounded-xl text-[#112A46] hover:bg-[#EAF1FA]"
                 aria-label="Open navigation menu"
-                aria-expanded={mobileMenuOpen}
               >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="3" y1="12" x2="21" y2="12" />
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.3"
+                  strokeLinecap="round"
+                >
                   <line x1="3" y1="6" x2="21" y2="6" />
+                  <line x1="3" y1="12" x2="21" y2="12" />
                   <line x1="3" y1="18" x2="21" y2="18" />
                 </svg>
               </button>
@@ -201,25 +209,30 @@ export default function AppLayout({ children }) {
             </div>
 
             {/* Desktop Navigation Links (>= 1024px ONLY - hidden on mobile/tablet) */}
-            <nav className="nav-links hidden lg:flex items-center gap-1 shrink-0">
+            <nav className="hidden lg:flex items-center gap-1 ml-4">
               <Link
                 href="/courses"
-                className={`px-3 py-2 rounded-xl text-sm font-semibold transition-colors ${
-                  pathname?.startsWith('/courses') ? 'bg-[#EAF1FA] text-[#112A46] font-bold' : 'text-[#334155] hover:text-[#112A46] hover:bg-[#F0F5FB]'
-                }`}
+                className="px-3 py-2 rounded-xl text-sm font-semibold
+                   text-[#334155] hover:bg-[#F0F5FB]"
               >
                 Courses Catalog
               </Link>
               <Link
                 href="/instructor"
-                className="px-3 py-2 rounded-xl text-sm font-semibold text-[#334155] hover:text-[#112A46] hover:bg-[#F0F5FB] transition-colors"
+                className="px-3 py-2 rounded-xl text-sm font-semibold
+                   text-[#334155] hover:bg-[#F0F5FB]"
               >
                 Teach on Silver Loft
               </Link>
             </nav>
 
             {/* Search Bar (Inline across ALL screens: takes center space) */}
-            <div className="flex-1 min-w-0 mx-1 sm:mx-3 max-w-full lg:max-w-md">
+            <div className="
+      flex-1
+      min-w-0
+      mx-2 sm:mx-3
+      lg:max-w-md
+    ">
               <HeaderSearchBar placeholder="Search courses..." />
             </div>
 
@@ -560,13 +573,22 @@ export default function AppLayout({ children }) {
         }}
       >
         {/* Logo */}
-        <Link href="/" className="logo" style={{ color: '#FFFFFF', padding: '0 8px', overflow: 'hidden' }}>
-          <span className="mark shrink-0">
+        <Link
+          href="/"
+          className="flex items-center gap-1.5 shrink-0"
+        >
+          <span className="shrink-0">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
               <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#ACC8E5" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-          </span>
-          {sidebarOpen && <span className="font-bold whitespace-nowrap">Silver Loft</span>}
+            <span className="
+        font-black
+        text-sm sm:text-base lg:text-xl
+        text-[#112A46]
+        whitespace-nowrap
+      ">
+              Silver Loft
+            </span>
         </Link>
 
         {/* Role switcher */}
