@@ -578,17 +578,25 @@ export default function AppLayout({ children }) {
           className="flex items-center gap-1.5 shrink-0"
         >
           <span className="shrink-0">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#ACC8E5" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+            >
+              <path
+                d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+                stroke="#ACC8E5"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
-            <span className="
-        font-black
-        text-sm sm:text-base lg:text-xl
-        text-[#112A46]
-        whitespace-nowrap
-      ">
-              Silver Loft
-            </span>
+          </span>
+
+          <span className="font-black text-sm sm:text-base lg:text-xl text-[#112A46] whitespace-nowrap">
+            Silver Loft
+          </span>
         </Link>
 
         {/* Role switcher */}
