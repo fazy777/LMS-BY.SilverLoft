@@ -4,7 +4,7 @@ import Link from 'next/link'
 
 export default function WorkspaceFooter() {
   return (
-    <footer className="w-full border-t border-[#E2E8F0] bg-white/90 backdrop-blur-md px-6 md:px-10 py-5 mt-auto">
+    <footer className="w-full border-t border-[#E2E8F0] bg-white/90 backdrop-blur-md px-4 sm:px-6 md:px-10 py-4 sm:py-5 pb-20 md:pb-5 mt-auto">
       <div className="flex flex-col lg:flex-row items-center justify-between gap-4 text-xs">
         {/* Brand & Workspace ID */}
         <div className="flex items-center gap-3 text-[#64748B] shrink-0">

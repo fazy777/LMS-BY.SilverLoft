@@ -158,8 +158,8 @@ export default function AdminPendingCourses({ onBack }: { onBack?: () => void })
           >
             ← Back to Admin Portal
           </button>
-          <h1 className="h-display2 text-[#112A46]">Course Review & Quality Gate Queue</h1>
-          <p className="text-sm text-[#64748B] mt-1 font-medium">
+          <h1 className="h-display2 text-[#112A46] text-xl sm:text-2xl md:text-3xl font-extrabold leading-tight">Course Review & Quality Gate Queue</h1>
+          <p className="text-xs sm:text-sm text-[#64748B] mt-1 font-medium">
             Evaluate instructor submissions, inspect curriculum completeness, and verify video resolution and audio quality.
           </p>
         </div>

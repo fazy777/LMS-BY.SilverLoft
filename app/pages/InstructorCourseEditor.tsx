@@ -384,7 +384,7 @@ export default function InstructorCourseEditor({
           >
             ← Back to Studio
           </button>
-          <h1 className="h-display2 text-[#112A46]">
+          <h1 className="h-display2 text-[#112A46] text-xl sm:text-2xl md:text-3xl font-extrabold leading-tight">
             {course?.title || 'Edit Course'}
           </h1>
         </div>

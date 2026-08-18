@@ -25,8 +25,8 @@ export default function AdminDashboard() {
     <div className="space-y-8">
       {/* ── Header ── */}
       <div>
-        <h1 className="h-display2 text-[#112A46]">Platform Administrator Portal</h1>
-        <p className="t-helper mt-0.5">
+        <h1 className="h-display2 text-[#112A46] text-xl sm:text-2xl md:text-3xl font-extrabold leading-tight">Platform Administrator Portal</h1>
+        <p className="text-xs sm:text-sm text-[#64748B] mt-1 font-medium">
           Real-time aggregated platform metrics, marketplace quality gates, and financial volume.
         </p>
       </div>

@@ -35,6 +35,15 @@ const ADMIN_NAV = [
   { icon: UserIcon, label: 'Account Settings', href: '/account' },
 ]
 
+const CATEGORIES = [
+  { name: 'Development', slug: 'development', icon: '💻' },
+  { name: 'Design', slug: 'design', icon: '🎨' },
+  { name: 'Business', slug: 'business', icon: '📊' },
+  { name: 'Marketing', slug: 'marketing', icon: '📈' },
+  { name: 'Data Science', slug: 'data-science', icon: '🔬' },
+  { name: 'Photography', slug: 'photography', icon: '📷' },
+]
+
 export default function AppLayout({ children }) {
   const pathname = usePathname()
   const router = useRouter()
@@ -47,7 +56,7 @@ export default function AppLayout({ children }) {
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false)
   const [userDropdownOpen, setUserDropdownOpen] = useState(false)
 
-  // Close drawers when route changes
+  // Close all overlays/drawers when route changes
   useEffect(() => {
     setMobileDrawerOpen(false)
     setMobileMenuOpen(false)
@@ -55,6 +64,36 @@ export default function AppLayout({ children }) {
     setUserDropdownOpen(false)
   }, [pathname])
 
+  // Body scroll locking when any mobile drawer or modal is open
+  useEffect(() => {
+    if (mobileMenuOpen || mobileDrawerOpen) {
+      document.body.style.overflow = 'hidden'
+      document.body.style.touchAction = 'none'
+    } else {
+      document.body.style.overflow = ''
+      document.body.style.touchAction = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+      document.body.style.touchAction = ''
+    }
+  }, [mobileMenuOpen, mobileDrawerOpen])
+
+  // Handle ESC key to close open menus/drawers
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setMobileMenuOpen(false)
+        setMobileDrawerOpen(false)
+        setMobileSearchOpen(false)
+        setUserDropdownOpen(false)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
+
+  // Check auth and role
   useEffect(() => {
     if (pathname?.startsWith('/admin')) {
       setRole('admin')
@@ -106,6 +145,7 @@ export default function AppLayout({ children }) {
   const handleRoleChange = (newRole) => {
     setRole(newRole)
     setMobileDrawerOpen(false)
+    setMobileMenuOpen(false)
     if (newRole === 'student') router.push('/dashboard')
     else if (newRole === 'instructor') router.push('/instructor')
   }
@@ -131,50 +171,57 @@ export default function AppLayout({ children }) {
       <div className="min-h-screen flex flex-col bg-[#F0F5FB]">
         {/* Site Header */}
         <header className="site-header">
-          <div className="wrap bar">
-            {/* Mobile Hamburger Menu Toggle */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 rounded-xl text-[#112A46] hover:bg-[#EAF1FA] transition-colors cursor-pointer"
-              aria-label="Open mobile menu"
-            >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="3" y1="12" x2="21" y2="12" />
-                <line x1="3" y1="6" x2="21" y2="6" />
-                <line x1="3" y1="18" x2="21" y2="18" />
-              </svg>
-            </button>
-
-            <Link href="/" className="logo">
-              <span className="mark">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+          <div className="wrap bar flex items-center justify-between gap-2 sm:gap-4 md:gap-6">
+            {/* Left: Hamburger (Mobile) + Logo */}
+            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+              {/* Mobile Hamburger Menu Toggle with 44px min target */}
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="md:hidden w-10 h-10 -ml-1.5 flex items-center justify-center rounded-xl text-[#112A46] hover:bg-[#EAF1FA] active:bg-[#D9E6F5] transition-colors cursor-pointer"
+                aria-label="Open mobile navigation menu"
+                aria-expanded={mobileMenuOpen}
+              >
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="3" y1="12" x2="21" y2="12" />
+                  <line x1="3" y1="6" x2="21" y2="6" />
+                  <line x1="3" y1="18" x2="21" y2="18" />
                 </svg>
-              </span>
-              <span className="font-display font-black text-lg sm:text-xl text-[#112A46]">Silver Loft</span>
-            </Link>
+              </button>
 
-            <nav className="nav-links hidden md:flex">
-              <Link href="/courses" className={pathname?.startsWith('/courses') ? 'active' : ''}>
+              <Link href="/" className="logo flex items-center gap-2 sm:gap-2.5">
+                <span className="mark shrink-0">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </span>
+                <span className="font-display font-black text-base sm:text-lg md:text-xl text-[#112A46] tracking-tight whitespace-nowrap">
+                  Silver Loft
+                </span>
+              </Link>
+            </div>
+
+            {/* Desktop Navigation Links */}
+            <nav className="nav-links hidden md:flex items-center gap-1.5 shrink-0">
+              <Link href="/courses" className={`px-3 py-2 rounded-xl text-sm font-semibold transition-colors ${pathname?.startsWith('/courses') ? 'bg-[#EAF1FA] text-[#112A46] font-bold' : 'text-[#334155] hover:text-[#112A46] hover:bg-[#F0F5FB]'}`}>
                 Courses Catalog
               </Link>
-              <Link href="/instructor">
+              <Link href="/instructor" className="px-3 py-2 rounded-xl text-sm font-semibold text-[#334155] hover:text-[#112A46] hover:bg-[#F0F5FB] transition-colors">
                 Teach on Silver Loft
               </Link>
             </nav>
 
-            {/* Global Search Bar (Desktop / Tablet) */}
-            <div className="hidden sm:block flex-1 max-w-md mx-2">
+            {/* Global Search Bar (Desktop & Tablet >= 768px) */}
+            <div className="hidden md:block flex-1 max-w-md mx-2">
               <HeaderSearchBar />
             </div>
 
-            {/* Header Actions */}
-            <div className="header-actions">
-              {/* Mobile Search Toggle */}
+            {/* Header Actions (Right) */}
+            <div className="header-actions flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+              {/* Mobile Search Toggle Button */}
               <button
                 onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
-                className="sm:hidden p-2 rounded-xl text-[#334155] hover:bg-[#EAF1FA] transition-colors cursor-pointer"
-                aria-label="Toggle search"
+                className="md:hidden w-10 h-10 flex items-center justify-center rounded-xl text-[#112A46] hover:bg-[#EAF1FA] active:bg-[#D9E6F5] transition-colors cursor-pointer"
+                aria-label="Toggle search bar"
               >
                 <SearchIcon size={19} color="#112A46" />
               </button>
@@ -183,35 +230,63 @@ export default function AppLayout({ children }) {
                 <div className="relative">
                   <button
                     onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                    className="flex items-center gap-2 p-1 rounded-full hover:bg-[#EAF1FA] transition-colors cursor-pointer"
+                    className="flex items-center gap-2 p-1 sm:px-2 sm:py-1 rounded-full hover:bg-[#EAF1FA] transition-colors cursor-pointer"
+                    aria-label="User account menu"
                   >
-                    <div className="avatar text-xs">{initials}</div>
-                    <span className="hidden sm:inline text-[13px] font-bold text-[#112A46] leading-tight truncate max-w-[120px]">{displayName}</span>
+                    <div className="avatar text-xs w-8 h-8 sm:w-9 sm:h-9">{initials}</div>
+                    <span className="hidden lg:inline text-[13px] font-bold text-[#112A46] leading-tight truncate max-w-[110px]">
+                      {displayName}
+                    </span>
+                    <svg className="hidden sm:block text-[#64748B]" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                      <path d="M6 9l6 6 6-6" />
+                    </svg>
                   </button>
 
                   {userDropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-[0_20px_50px_rgba(17,42,70,0.15)] border border-[#E2E8F0] p-2 z-50">
-                      <div className="px-3 py-2 border-b border-[#F1F5F9] mb-1">
+                    <div className="absolute right-0 mt-2 w-60 bg-white rounded-2xl shadow-[0_20px_50px_rgba(17,42,70,0.18)] border border-[#E2E8F0] p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                      <div className="px-3.5 py-2.5 border-b border-[#F1F5F9] mb-1 bg-[#F8FAFC] rounded-xl">
                         <div className="font-bold text-[13.5px] text-[#112A46] truncate">{displayName}</div>
                         <div className="text-[11.5px] text-[#64748B] truncate">{user.email}</div>
+                        <div className="mt-1">
+                          <span className="pill text-[9px] font-bold bg-[#EAF1FA] text-[#112A46] uppercase">
+                            {user.is_admin ? 'Admin' : user.is_instructor ? 'Instructor' : 'Student'}
+                          </span>
+                        </div>
                       </div>
-                      <Link href="/dashboard" className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-[13.5px] font-semibold text-[#334155] hover:bg-[#F0F5FB] hover:text-[#112A46]">
+                      <Link
+                        href="/dashboard"
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-[13px] font-semibold text-[#334155] hover:bg-[#F0F5FB] hover:text-[#112A46]"
+                      >
                         <GridIcon size={16} /> Student Dashboard
                       </Link>
-                      <Link href="/instructor" className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-[13.5px] font-semibold text-[#334155] hover:bg-[#F0F5FB] hover:text-[#112A46]">
+                      <Link
+                        href="/instructor"
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-[13px] font-semibold text-[#334155] hover:bg-[#F0F5FB] hover:text-[#112A46]"
+                      >
                         <BookOpenIcon size={16} /> Instructor Studio
                       </Link>
                       {isSuperAdmin && (
-                        <Link href="/admin" className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-[13.5px] font-semibold text-[#7C3AED] hover:bg-[#EDE9FE]">
+                        <Link
+                          href="/admin"
+                          onClick={() => setUserDropdownOpen(false)}
+                          className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-[13px] font-semibold text-[#7C3AED] hover:bg-[#EDE9FE]"
+                        >
                           <ChartIcon size={16} /> Admin Portal
                         </Link>
                       )}
-                      <Link href="/account" className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-[13.5px] font-semibold text-[#334155] hover:bg-[#F0F5FB] hover:text-[#112A46]">
+                      <Link
+                        href="/account"
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-[13px] font-semibold text-[#334155] hover:bg-[#F0F5FB] hover:text-[#112A46]"
+                      >
                         <UserIcon size={16} /> Account Settings
                       </Link>
+                      <div className="border-t border-[#F1F5F9] my-1" />
                       <button
                         onClick={handleSignOut}
-                        className="w-full mt-1 flex items-center gap-2.5 px-3 py-2 rounded-xl text-[13.5px] font-bold text-[#DC2626] hover:bg-[#FEF2F2] cursor-pointer"
+                        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[13px] font-bold text-[#DC2626] hover:bg-[#FEF2F2] cursor-pointer"
                       >
                         Sign out
                       </button>
@@ -219,11 +294,17 @@ export default function AppLayout({ children }) {
                   )}
                 </div>
               ) : (
-                <div className="flex items-center gap-2">
-                  <Link href="/login" className="btn btn-ghost btn-sm font-bold text-xs sm:text-sm px-3 sm:px-4">
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <Link
+                    href="/login"
+                    className="btn btn-ghost btn-sm font-bold text-xs sm:text-sm px-2.5 sm:px-4 h-9 sm:h-10 text-[#112A46]"
+                  >
                     Log in
                   </Link>
-                  <Link href="/signup" className="btn btn-primary btn-sm font-bold text-xs sm:text-sm px-3 sm:px-4 shadow-sm">
+                  <Link
+                    href="/signup"
+                    className="btn btn-primary btn-sm font-bold text-xs sm:text-sm px-3 sm:px-4 h-9 sm:h-10 shadow-sm whitespace-nowrap"
+                  >
                     Sign up
                   </Link>
                 </div>
@@ -231,39 +312,95 @@ export default function AppLayout({ children }) {
             </div>
           </div>
 
-          {/* Mobile Search Row (when open) */}
+          {/* Mobile Search Row (Smooth Expandable Strip) */}
           {mobileSearchOpen && (
-            <div className="sm:hidden px-4 pb-3 pt-1 border-t border-[#F1F5F9] bg-white">
-              <HeaderSearchBar autoFocus onAfterNavigate={() => setMobileSearchOpen(false)} />
+            <div className="md:hidden px-3.5 pb-3 pt-1 border-t border-[#E2E8F0] bg-white shadow-md animate-in slide-in-from-top-1 duration-150">
+              <div className="flex items-center gap-2">
+                <div className="flex-1">
+                  <HeaderSearchBar
+                    autoFocus
+                    placeholder="Search courses & skills..."
+                    onAfterNavigate={() => setMobileSearchOpen(false)}
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setMobileSearchOpen(false)}
+                  className="p-2 text-xs font-bold text-[#64748B] hover:text-[#112A46] cursor-pointer shrink-0"
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           )}
         </header>
 
         {/* Mobile Navigation Drawer for Public Marketplace */}
         {mobileMenuOpen && (
-          <div className="md:hidden">
-            <div className="drawer-backdrop" onClick={() => setMobileMenuOpen(false)} />
-            <div className="drawer-panel p-5">
-              <div className="flex items-center justify-between pb-4 border-b border-white/15 mb-4">
-                <Link href="/" className="logo" style={{ color: '#FFFFFF' }} onClick={() => setMobileMenuOpen(false)}>
+          <div className="md:hidden fixed inset-0 z-50">
+            {/* Backdrop with Blur */}
+            <div
+              className="drawer-backdrop"
+              onClick={() => setMobileMenuOpen(false)}
+              aria-hidden="true"
+            />
+
+            {/* Slide-out Drawer Panel */}
+            <div className="drawer-panel p-5 flex flex-col justify-between overflow-hidden">
+              {/* Drawer Top Header */}
+              <div className="flex items-center justify-between pb-4 border-b border-white/15 mb-3">
+                <Link
+                  href="/"
+                  className="logo flex items-center gap-2"
+                  style={{ color: '#FFFFFF' }}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
                   <span className="mark">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                       <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#ACC8E5" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </span>
-                  <span className="font-bold">Silver Loft</span>
+                  <span className="font-bold text-lg text-white">Silver Loft</span>
                 </Link>
                 <button
                   onClick={() => setMobileMenuOpen(false)}
-                  className="p-1 rounded-lg text-[#ACC8E5] hover:text-white"
-                  aria-label="Close menu"
+                  className="w-9 h-9 rounded-xl flex items-center justify-center text-[#ACC8E5] hover:text-white hover:bg-white/10 active:bg-white/20 transition-colors"
+                  aria-label="Close navigation drawer"
                 >
-                  ✕
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
                 </button>
               </div>
 
-              <div className="space-y-1 flex-1 overflow-y-auto">
-                <div className="side-label text-[#ACC8E5]">Explore</div>
+              {/* Drawer Quick Search */}
+              <div className="mb-4">
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault()
+                    const input = e.currentTarget.elements.namedItem('mobile_q')
+                    const val = input?.value?.trim()
+                    setMobileMenuOpen(false)
+                    router.push(val ? `/courses?q=${encodeURIComponent(val)}` : '/courses')
+                  }}
+                  className="relative"
+                >
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#ACC8E5]">
+                    <SearchIcon size={16} color="#ACC8E5" />
+                  </span>
+                  <input
+                    name="mobile_q"
+                    type="text"
+                    placeholder="Search courses..."
+                    className="w-full h-10 pl-9 pr-4 bg-white/10 border border-white/20 rounded-xl text-xs text-white placeholder:text-[#ACC8E5]/60 outline-none focus:bg-white/20 focus:border-[#ACC8E5] transition-all"
+                  />
+                </form>
+              </div>
+
+              {/* Scrollable Navigation Links */}
+              <div className="space-y-1 flex-1 overflow-y-auto no-scrollbar pr-1">
+                <div className="side-label text-[#ACC8E5] font-extrabold text-[11px] tracking-wider uppercase">Marketplace</div>
                 <Link
                   href="/courses"
                   onClick={() => setMobileMenuOpen(false)}
@@ -281,9 +418,27 @@ export default function AppLayout({ children }) {
                   <span>Teach on Silver Loft</span>
                 </Link>
 
+                {/* Categories Accordion / List */}
+                <div className="pt-3">
+                  <div className="side-label text-[#ACC8E5] font-extrabold text-[11px] tracking-wider uppercase">Popular Topics</div>
+                  <div className="grid grid-cols-2 gap-1.5 pt-1">
+                    {CATEGORIES.map(c => (
+                      <Link
+                        key={c.slug}
+                        href={`/courses?category=${c.slug}`}
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="flex items-center gap-2 p-2 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-[#EAF1FA] transition-colors"
+                      >
+                        <span>{c.icon}</span>
+                        <span className="truncate">{c.name}</span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+
                 {user && (
                   <>
-                    <div className="side-label text-[#ACC8E5] mt-4">My Account</div>
+                    <div className="side-label text-[#ACC8E5] font-extrabold text-[11px] tracking-wider uppercase mt-4">Workspace & Learning</div>
                     <Link
                       href="/dashboard"
                       onClick={() => setMobileMenuOpen(false)}
@@ -322,19 +477,20 @@ export default function AppLayout({ children }) {
                 )}
               </div>
 
-              <div className="pt-4 border-t border-white/15">
+              {/* Drawer Bottom Profile / Auth Buttons */}
+              <div className="pt-4 border-t border-white/15 mt-auto">
                 {user ? (
                   <div>
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="avatar text-xs" style={{ width: 34, height: 34 }}>{initials}</div>
-                      <div className="overflow-hidden flex-1">
+                    <div className="flex items-center gap-3 mb-3 p-2 rounded-xl bg-white/5">
+                      <div className="avatar text-xs shrink-0" style={{ width: 36, height: 36 }}>{initials}</div>
+                      <div className="overflow-hidden flex-1 min-w-0">
                         <div className="text-xs font-bold text-white truncate">{displayName}</div>
                         <div className="text-[11px] text-[#ACC8E5] truncate">{user.email}</div>
                       </div>
                     </div>
                     <button
                       onClick={handleSignOut}
-                      className="w-full py-2.5 rounded-xl border border-white/20 text-[#ACC8E5] text-xs font-bold hover:bg-white/10"
+                      className="w-full py-2.5 rounded-xl border border-white/25 text-[#ACC8E5] hover:text-white hover:bg-white/10 text-xs font-bold transition-colors cursor-pointer"
                     >
                       Sign out
                     </button>
@@ -344,14 +500,14 @@ export default function AppLayout({ children }) {
                     <Link
                       href="/login"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="btn btn-secondary btn-sm text-xs font-bold w-full"
+                      className="btn btn-secondary btn-sm text-xs font-bold w-full justify-center"
                     >
                       Log in
                     </Link>
                     <Link
                       href="/signup"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="btn btn-primary btn-sm text-xs font-bold w-full bg-[#ACC8E5] text-[#112A46]"
+                      className="btn btn-primary btn-sm text-xs font-bold w-full justify-center bg-[#ACC8E5] text-[#112A46] hover:bg-white"
                     >
                       Sign up
                     </Link>
@@ -381,7 +537,7 @@ export default function AppLayout({ children }) {
   if (!authChecked) {
     return (
       <div className="min-h-screen bg-[#F0F5FB] flex flex-col items-center justify-center p-6 text-center">
-        <div className="w-8 h-8 rounded-full border-3 border-[#112A46] border-t-transparent animate-spin mb-3"></div>
+        <div className="w-9 h-9 rounded-full border-3 border-[#112A46] border-t-transparent animate-spin mb-3"></div>
         <p className="text-sm font-bold text-[#112A46]">Loading workspace...</p>
       </div>
     )
@@ -391,10 +547,10 @@ export default function AppLayout({ children }) {
   if (!user) {
     return (
       <div className="min-h-screen bg-[#F0F5FB] flex flex-col items-center justify-center p-6 text-center">
-        <div className="card p-8 max-w-md w-full text-center shadow-lg">
+        <div className="card p-6 sm:p-8 max-w-md w-full text-center shadow-lg bg-white">
           <div className="text-3xl mb-3">🔒</div>
           <h2 className="h-card text-lg text-[#112A46] font-bold mb-2">Authentication Required</h2>
-          <p className="text-xs text-[#64748B] mb-6 leading-relaxed">
+          <p className="text-xs sm:text-sm text-[#64748B] mb-6 leading-relaxed">
             Please log in to access your course dashboard, learning materials, and instructor settings.
           </p>
           <div className="flex gap-3 justify-center">
@@ -416,8 +572,8 @@ export default function AppLayout({ children }) {
   }
 
   return (
-    <div className="app-shell">
-      {/* ── Desktop Sidebar ── */}
+    <div className="app-shell min-h-screen flex">
+      {/* ── Desktop Sidebar (>= 900px) ── */}
       <aside
         className="app-sidebar hidden md:flex"
         style={{
@@ -433,7 +589,7 @@ export default function AppLayout({ children }) {
               <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#ACC8E5" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </span>
-          {sidebarOpen && <span className="font-bold">Silver Loft</span>}
+          {sidebarOpen && <span className="font-bold whitespace-nowrap">Silver Loft</span>}
         </Link>
 
         {/* Role switcher */}
@@ -536,24 +692,32 @@ export default function AppLayout({ children }) {
 
       {/* ── Mobile Drawer (Slide-out navigation for screens < 900px) ── */}
       {mobileDrawerOpen && (
-        <div className="md:hidden">
-          <div className="drawer-backdrop" onClick={() => setMobileDrawerOpen(false)} />
-          <div className="drawer-panel p-5">
+        <div className="md:hidden fixed inset-0 z-50">
+          <div
+            className="drawer-backdrop"
+            onClick={() => setMobileDrawerOpen(false)}
+            aria-hidden="true"
+          />
+          <div className="drawer-panel p-5 flex flex-col justify-between">
+            {/* Header */}
             <div className="flex items-center justify-between pb-4 border-b border-white/15 mb-4">
-              <Link href="/" className="logo" style={{ color: '#FFFFFF' }} onClick={() => setMobileDrawerOpen(false)}>
+              <Link href="/" className="logo flex items-center gap-2" style={{ color: '#FFFFFF' }} onClick={() => setMobileDrawerOpen(false)}>
                 <span className="mark">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                     <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#ACC8E5" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </span>
-                <span className="font-bold">Silver Loft</span>
+                <span className="font-bold text-white text-lg">Silver Loft</span>
               </Link>
               <button
                 onClick={() => setMobileDrawerOpen(false)}
-                className="p-1 rounded-lg text-[#ACC8E5] hover:text-white"
-                aria-label="Close drawer"
+                className="w-9 h-9 rounded-xl flex items-center justify-center text-[#ACC8E5] hover:text-white hover:bg-white/10"
+                aria-label="Close navigation drawer"
               >
-                ✕
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
               </button>
             </div>
 
@@ -579,8 +743,8 @@ export default function AppLayout({ children }) {
             )}
 
             {/* Navigation Group */}
-            <div className="side-group flex-1 overflow-y-auto space-y-1">
-              <div className="side-label text-[#ACC8E5]">
+            <div className="side-group flex-1 overflow-y-auto space-y-1 pr-1">
+              <div className="side-label text-[#ACC8E5] font-extrabold text-[11px] tracking-wider uppercase">
                 {isAdminRoute ? 'Admin Portal' : role === 'instructor' ? 'Instructor Studio' : 'Student Learning'}
               </div>
 
@@ -599,7 +763,7 @@ export default function AppLayout({ children }) {
                 )
               })}
 
-              <div className="pt-2">
+              <div className="pt-3 border-t border-white/10 mt-3">
                 <Link
                   href="/"
                   onClick={() => setMobileDrawerOpen(false)}
@@ -612,9 +776,9 @@ export default function AppLayout({ children }) {
 
             {/* User footer inside drawer */}
             <div className="pt-4 border-t border-white/15 mt-auto">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="avatar text-xs" style={{ width: 34, height: 34 }}>{initials}</div>
-                <div className="overflow-hidden flex-1">
+              <div className="flex items-center gap-3 mb-3 p-2 rounded-xl bg-white/5">
+                <div className="avatar text-xs shrink-0" style={{ width: 36, height: 36 }}>{initials}</div>
+                <div className="overflow-hidden flex-1 min-w-0">
                   <div className="text-xs font-bold text-white truncate">{displayName}</div>
                   <div className="text-[11px] text-[#ACC8E5] capitalize truncate">
                     {isAdminRoute ? 'Administrator' : role === 'instructor' ? 'Instructor' : 'Student'}
@@ -624,7 +788,7 @@ export default function AppLayout({ children }) {
 
               <button
                 onClick={handleSignOut}
-                className="w-full py-2 rounded-lg border border-white/20 text-[#ACC8E5] text-xs font-bold hover:bg-white/10"
+                className="w-full py-2.5 rounded-xl border border-white/25 text-[#ACC8E5] hover:text-white hover:bg-white/10 text-xs font-bold transition-colors cursor-pointer"
               >
                 Sign out
               </button>
@@ -634,46 +798,117 @@ export default function AppLayout({ children }) {
       )}
 
       {/* ── App Main Stage ── */}
-      <div className="app-main flex flex-col min-h-screen pb-16 md:pb-0">
+      <div className="app-main flex flex-col flex-1 min-w-0 min-h-screen pb-20 md:pb-0">
         {/* Topbar */}
         <header className="app-topbar">
-          {/* Mobile Drawer Trigger Button */}
-          <button
-            onClick={() => setMobileDrawerOpen(true)}
-            className="md:hidden p-2 -ml-2 rounded-xl text-[#112A46] hover:bg-[#EAF1FA] transition-colors cursor-pointer"
-            aria-label="Open navigation menu"
-          >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="3" y1="12" x2="21" y2="12" />
-              <line x1="3" y1="6" x2="21" y2="6" />
-              <line x1="3" y1="18" x2="21" y2="18" />
-            </svg>
-          </button>
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            {/* Mobile Drawer Trigger Button */}
+            <button
+              onClick={() => setMobileDrawerOpen(true)}
+              className="md:hidden w-10 h-10 -ml-2 flex items-center justify-center rounded-xl text-[#112A46] hover:bg-[#EAF1FA] active:bg-[#D9E6F5] transition-colors cursor-pointer"
+              aria-label="Open navigation menu"
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
+            </button>
 
-          <div className="h-section text-sm sm:text-base md:text-lg truncate max-w-[180px] sm:max-w-none" style={{ margin: 0, color: '#112A46' }}>
-            {isAdminRoute ? 'Admin Control Center' : role === 'instructor' ? 'Instructor Studio' : 'Learning Dashboard'}
+            <h1 className="h-section text-sm sm:text-base md:text-lg font-bold text-[#112A46] truncate max-w-[160px] xs:max-w-[200px] sm:max-w-none m-0">
+              {isAdminRoute ? 'Admin Control Center' : role === 'instructor' ? 'Instructor Studio' : 'Learning Dashboard'}
+            </h1>
           </div>
 
-          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div className="hidden lg:block" style={{ width: 260 }}>
-              <HeaderSearchBar placeholder="Quick course search..." />
+          <div className="ml-auto flex items-center gap-2 sm:gap-3">
+            {/* Desktop Search Bar */}
+            <div className="hidden lg:block w-64">
+              <HeaderSearchBar placeholder="Search courses..." />
             </div>
 
-            <Link href="/courses" className="btn btn-secondary btn-sm hidden sm:inline-flex font-bold text-xs">
+            {/* Mobile Search Toggle */}
+            <button
+              onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
+              className="lg:hidden w-9 h-9 flex items-center justify-center rounded-xl text-[#112A46] hover:bg-[#EAF1FA] transition-colors cursor-pointer"
+              aria-label="Quick search"
+            >
+              <SearchIcon size={18} color="#112A46" />
+            </button>
+
+            <Link href="/courses" className="btn btn-secondary btn-sm hidden sm:inline-flex font-bold text-xs h-9 px-3">
               Explore Courses
             </Link>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, paddingLeft: 8, borderLeft: '1px solid #E2E8F0' }}>
-              <div className="avatar text-xs" style={{ width: 34, height: 34 }}>{initials}</div>
-              <div className="hidden sm:block">
-                <div style={{ fontSize: 13, fontWeight: 700, color: '#0B1B2E', lineHeight: 1.2 }}>{displayName}</div>
-                <div style={{ fontSize: 11, color: '#64748B', textTransform: 'capitalize', lineHeight: 1.2 }}>
-                  {isAdminRoute ? 'Administrator' : role === 'instructor' ? 'Instructor' : 'Student'}
+            {/* User Avatar + Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                className="flex items-center gap-2 pl-2 border-l border-[#E2E8F0] hover:opacity-80 transition-opacity cursor-pointer"
+                aria-label="Account menu"
+              >
+                <div className="avatar text-xs w-8 h-8 sm:w-9 sm:h-9">{initials}</div>
+                <div className="hidden sm:block text-left">
+                  <div className="text-xs font-bold text-[#0B1B2E] leading-tight truncate max-w-[110px]">{displayName}</div>
+                  <div className="text-[10px] text-[#64748B] capitalize leading-tight">
+                    {isAdminRoute ? 'Admin' : role === 'instructor' ? 'Instructor' : 'Student'}
+                  </div>
                 </div>
-              </div>
+              </button>
+
+              {userDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-[0_20px_50px_rgba(17,42,70,0.18)] border border-[#E2E8F0] p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                  <div className="px-3 py-2 border-b border-[#F1F5F9] mb-1">
+                    <div className="font-bold text-xs text-[#112A46] truncate">{displayName}</div>
+                    <div className="text-[11px] text-[#64748B] truncate">{user.email}</div>
+                  </div>
+                  <Link
+                    href="/account"
+                    onClick={() => setUserDropdownOpen(false)}
+                    className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-[#334155] hover:bg-[#F0F5FB]"
+                  >
+                    <UserIcon size={15} /> Account Settings
+                  </Link>
+                  <Link
+                    href="/"
+                    onClick={() => setUserDropdownOpen(false)}
+                    className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-[#334155] hover:bg-[#F0F5FB]"
+                  >
+                    <SearchIcon size={15} /> Public Marketplace
+                  </Link>
+                  <div className="border-t border-[#F1F5F9] my-1" />
+                  <button
+                    onClick={handleSignOut}
+                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold text-[#DC2626] hover:bg-[#FEF2F2] cursor-pointer"
+                  >
+                    Sign out
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </header>
+
+        {/* Mobile Search Row in Workspace Topbar */}
+        {mobileSearchOpen && (
+          <div className="lg:hidden px-4 pb-3 pt-1 border-b border-[#E2E8F0] bg-white shadow-sm animate-in slide-in-from-top-1 duration-150">
+            <div className="flex items-center gap-2">
+              <div className="flex-1">
+                <HeaderSearchBar
+                  autoFocus
+                  placeholder="Quick course search..."
+                  onAfterNavigate={() => setMobileSearchOpen(false)}
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => setMobileSearchOpen(false)}
+                className="p-2 text-xs font-bold text-[#64748B] hover:text-[#112A46] cursor-pointer shrink-0"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Content Area */}
         <main className="app-content flex-1">
@@ -685,48 +920,104 @@ export default function AppLayout({ children }) {
 
         {/* ── Mobile Bottom Navigation Bar (Screens < 768px) ── */}
         <nav className="mobile-bottom-nav md:hidden">
-          <Link
-            href={role === 'instructor' ? '/instructor' : '/dashboard'}
-            className={`mobile-nav-item ${(pathname === '/dashboard' || pathname === '/instructor') ? 'active' : ''}`}
-          >
-            <GridIcon size={18} />
-            <span>{role === 'instructor' ? 'Studio' : 'Dashboard'}</span>
-          </Link>
-
-          <Link
-            href="/courses"
-            className={`mobile-nav-item ${pathname?.startsWith('/courses') ? 'active' : ''}`}
-          >
-            <SearchIcon size={18} />
-            <span>Browse</span>
-          </Link>
-
-          {role === 'instructor' && (
-            <Link
-              href="/instructor/earnings"
-              className={`mobile-nav-item ${pathname?.startsWith('/instructor/earnings') ? 'active' : ''}`}
-            >
-              <DollarIcon size={18} />
-              <span>Earnings</span>
-            </Link>
+          {isAdminRoute && isSuperAdmin ? (
+            <>
+              <Link
+                href="/admin"
+                className={`mobile-nav-item ${pathname === '/admin' ? 'active' : ''}`}
+              >
+                <GridIcon size={18} />
+                <span>Overview</span>
+              </Link>
+              <Link
+                href="/admin/pending"
+                className={`mobile-nav-item ${pathname?.startsWith('/admin/pending') ? 'active' : ''}`}
+              >
+                <ClockIcon size={18} />
+                <span>Queue</span>
+              </Link>
+              <Link
+                href="/admin/users"
+                className={`mobile-nav-item ${pathname?.startsWith('/admin/users') ? 'active' : ''}`}
+              >
+                <UsersIcon size={18} />
+                <span>Users</span>
+              </Link>
+              <Link
+                href="/admin/analytics"
+                className={`mobile-nav-item ${pathname?.startsWith('/admin/analytics') ? 'active' : ''}`}
+              >
+                <ChartIcon size={18} />
+                <span>Analytics</span>
+              </Link>
+            </>
+          ) : role === 'instructor' ? (
+            <>
+              <Link
+                href="/instructor"
+                className={`mobile-nav-item ${pathname === '/instructor' ? 'active' : ''}`}
+              >
+                <GridIcon size={18} />
+                <span>Studio</span>
+              </Link>
+              <Link
+                href="/instructor/courses/new"
+                className={`mobile-nav-item ${pathname?.startsWith('/instructor/courses/new') ? 'active' : ''}`}
+              >
+                <BookOpenIcon size={18} />
+                <span>Builder</span>
+              </Link>
+              <Link
+                href="/instructor/earnings"
+                className={`mobile-nav-item ${pathname?.startsWith('/instructor/earnings') ? 'active' : ''}`}
+              >
+                <DollarIcon size={18} />
+                <span>Earnings</span>
+              </Link>
+              <Link
+                href="/account"
+                className={`mobile-nav-item ${pathname?.startsWith('/account') ? 'active' : ''}`}
+              >
+                <UserIcon size={18} />
+                <span>Account</span>
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/dashboard"
+                className={`mobile-nav-item ${pathname === '/dashboard' ? 'active' : ''}`}
+              >
+                <GridIcon size={18} />
+                <span>Dashboard</span>
+              </Link>
+              <Link
+                href="/courses"
+                className={`mobile-nav-item ${pathname?.startsWith('/courses') ? 'active' : ''}`}
+              >
+                <SearchIcon size={18} />
+                <span>Browse</span>
+              </Link>
+              <Link
+                href="/account"
+                className={`mobile-nav-item ${pathname?.startsWith('/account') ? 'active' : ''}`}
+              >
+                <UserIcon size={18} />
+                <span>Account</span>
+              </Link>
+            </>
           )}
 
-          <Link
-            href="/account"
-            className={`mobile-nav-item ${pathname?.startsWith('/account') ? 'active' : ''}`}
-          >
-            <UserIcon size={18} />
-            <span>Account</span>
-          </Link>
-
+          {/* Menu Drawer button */}
           <button
             onClick={() => setMobileDrawerOpen(true)}
             className="mobile-nav-item border-none bg-transparent cursor-pointer"
+            aria-label="Open sidebar drawer"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-              <circle cx="12" cy="12" r="1" />
-              <circle cx="19" cy="12" r="1" />
-              <circle cx="5" cy="12" r="1" />
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="4" y1="6" x2="20" y2="6" />
+              <line x1="4" y1="12" x2="20" y2="12" />
+              <line x1="4" y1="18" x2="20" y2="18" />
             </svg>
             <span>Menu</span>
           </button>

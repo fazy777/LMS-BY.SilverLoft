@@ -98,8 +98,8 @@ export default function AdminUsers() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="h-display2 text-[#112A46]">User Account Controls</h1>
-          <p className="text-sm text-[#64748B] mt-1 font-medium">
+          <h1 className="h-display2 text-[#112A46] text-xl sm:text-2xl md:text-3xl font-extrabold leading-tight">User Account Controls</h1>
+          <p className="text-xs sm:text-sm text-[#64748B] mt-1 font-medium">
             Search registered accounts, view roles, and manage system privileges.
           </p>
         </div>
@@ -135,12 +135,12 @@ export default function AdminUsers() {
       )}
 
       {/* Tabs */}
-      <div className="flex gap-2 flex-wrap">
+      <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
         {(['All', 'Students', 'Instructors', 'Admins', 'Suspended'] as Tab[]).map(tab => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`btn btn-sm ${activeTab === tab ? 'btn-primary' : 'btn-secondary'} text-xs font-bold`}
+            className={`btn btn-sm shrink-0 ${activeTab === tab ? 'btn-primary' : 'btn-secondary'} text-xs font-bold`}
           >
             {tab}
           </button>
